@@ -3,7 +3,9 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
+import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
+import 'package:shieldbound/src/collisions/collision_block.dart';
 
 enum PlayerState { idleLeft, idleRight, walkLeft, walkRight }
 
@@ -34,15 +36,19 @@ class Player extends SpriteAnimationGroupComponent
       PlayerFacing.right; // Cho hướng quay mặt mặc định là "phải"
   PlayerFacing lastFacingDirection =
       PlayerFacing.right; // Hướng quay ở lần quay cuối (Mặc định là "phải")
+
   // Định nghĩa các SpriteAnimation
   late final SpriteAnimation idleLeftAnimation;
   late final SpriteAnimation idleRightAnimation;
   late final SpriteAnimation walkLeftAnimation;
   late final SpriteAnimation walkRightAnimation;
 
+  // Các thông số phục vụ tính Collision
+  List<CollisionBlock> collisionBlocks = [];
   @override
   FutureOr<void> onLoad() {
     // Những method và function được thêm vào đây sẽ được chạy khi game load
+    debugMode = isDebugModeActived;
     _loadAllAnimation();
     return super.onLoad();
   }

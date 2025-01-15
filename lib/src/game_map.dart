@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:shieldbound/shieldbound.dart';
+import 'package:shieldbound/src/collisions/collision_block.dart';
 import 'package:shieldbound/src/player.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 
@@ -9,14 +10,14 @@ class GameMap extends World with HasGameRef<Shieldbound> {
   final String mapName; // Tên của map
   final Player player; //  Khai báo một player cho một map
   final Vector2 gridSize = Vector2.all(16); // Grid size của map 16x16 ô
-
   GameMap({required this.mapName, required this.player});
 
   @override
   FutureOr<void> onLoad() async {
     // Được chạy khi load game
-    late TiledComponent map; // Khai báo map
 
+    late TiledComponent map; // Khai báo map
+    List<CollisionBlock> collisionBlocks = [];
     map = await TiledComponent.load(
       '$mapName.tmx',
       gridSize,
@@ -40,6 +41,26 @@ class GameMap extends World with HasGameRef<Shieldbound> {
         }
       }
     }
+    // Lớp thứ II: lớp cho vùng va chạm (Collision Layer)
+    final collisionLayer = map.tileMap.getLayer<ObjectGroup>('Collision');
+    if (collisionLayer != null) {
+      for (final block in collisionLayer.objects) {
+        switch (block.class_) {
+          // Trường hợp block có cơ chế đặc biệt
+
+          // Trường hợp mặc định
+          default:
+            final collisionBlock = CollisionBlock(
+              positioin: Vector2(block.x, block.y),
+              size: Vector2(block.width, block.height),
+            );
+            collisionBlocks.add(collisionBlock);
+            add(collisionBlock);
+            break;
+        }
+      }
+    }
+    player.collisionBlocks = collisionBlocks;
     return super.onLoad();
   }
 }
