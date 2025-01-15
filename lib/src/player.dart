@@ -32,7 +32,8 @@ class Player extends SpriteAnimationGroupComponent
       .idleRight; // Cho state mặc định của nhân vật là "đứng chờ quay mặt phải"
   PlayerFacing playerFacing =
       PlayerFacing.right; // Cho hướng quay mặt mặc định là "phải"
-
+  PlayerFacing lastFacingDirection =
+      PlayerFacing.right; // Hướng quay ở lần quay cuối (Mặc định là "phải")
   // Định nghĩa các SpriteAnimation
   late final SpriteAnimation idleLeftAnimation;
   late final SpriteAnimation idleRightAnimation;
@@ -50,6 +51,7 @@ class Player extends SpriteAnimationGroupComponent
   void update(double dt) {
     // Cập nhật game theo tick
     _updatePlayerMovement(dt);
+    _updatePlayerState();
     super.update(dt);
   }
 
@@ -66,10 +68,10 @@ class Player extends SpriteAnimationGroupComponent
         keysPressed.contains(LogicalKeyboardKey.arrowDown);
     // Nếu di chuyển qua trái bằng nút A hoặc nút ←
     final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyD) ||
-        keysPressed.contains(LogicalKeyboardKey.arrowLeft);
+        keysPressed.contains(LogicalKeyboardKey.arrowRight);
     // Nếu di chuyển qua phải bằng nút D hoặc nút →
     final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA) ||
-        keysPressed.contains(LogicalKeyboardKey.arrowRight);
+        keysPressed.contains(LogicalKeyboardKey.arrowLeft);
 
     // Xác định hướng di chuyển
     moveDirection.y += isUpKeyPressed ? -1 : 0;
@@ -88,9 +90,9 @@ class Player extends SpriteAnimationGroupComponent
 
     // Kiểm tra hướng quay của player
     if (isLeftKeyPressed) {
-      playerFacing = PlayerFacing.left;
+      lastFacingDirection = PlayerFacing.left;
     } else if (isRightKeyPressed) {
-      playerFacing = PlayerFacing.right;
+      lastFacingDirection = PlayerFacing.right;
     }
 
     return super.onKeyEvent(event, keysPressed);
@@ -143,5 +145,22 @@ class Player extends SpriteAnimationGroupComponent
     // Vị trí sau khi di chuyển = Vận tốc * delta time
     position.x += velocity.x * dt;
     position.y += velocity.y * dt;
+  }
+
+  void _updatePlayerState() {
+    if (velocity.x < 0 ||
+        (velocity.x < 0 && velocity.y != 0) ||
+        (lastFacingDirection == PlayerFacing.left && velocity.y != 0)) {
+      playerState = PlayerState.walkLeft;
+    } else if (velocity.x > 0 ||
+        (velocity.x > 0 && velocity.y != 0) ||
+        (lastFacingDirection == PlayerFacing.right && velocity.y != 0)) {
+      playerState = PlayerState.walkRight;
+    } else {
+      playerState = lastFacingDirection == PlayerFacing.left
+          ? PlayerState.idleLeft
+          : PlayerState.idleRight;
+    }
+    current = playerState;
   }
 }
