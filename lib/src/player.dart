@@ -21,7 +21,7 @@ class Player extends SpriteAnimationGroupComponent
   final double stepTime = 0.1;
 
   // Định nghĩa các thông số mặc định của nhân vật
-  double moveSpeed = 100; // Tốc độ di chuyển
+  double moveSpeed = 100; // Tốc độ di chuyển mặc định
   Vector2 moveDirection = Vector2
       .zero(); // Hướng di chuyển (Giải thích: (a,b) = a cho hướng trái phải và b cho lên xuống)
   Vector2 velocity = Vector2
@@ -70,7 +70,7 @@ class Player extends SpriteAnimationGroupComponent
   SpriteAnimation _spriteAnimation(String state, int amount) {
     // Load các ảnh của nhân vật $character đang ở trạng thái $state từ Cache
     var spriteImages = game.images
-        .fromCache('Character/$character/$character/$character-$state.png');
+        .fromCache('Characters/$character/$character/$character-$state.png');
     // Lấy data từ Spritesheets theo kiểu sequenced với:
     /*   amount: số lượng sprite trong một sheet(theo kiểu sequence),
          stepTime: thời gian để chạy animation giữa các sprite trong sequence,
