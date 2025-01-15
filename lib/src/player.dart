@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flame/components.dart';
+import 'package:flutter/services.dart';
 import 'package:shieldbound/shieldbound.dart';
 
 enum PlayerState { idleLeft, idleRight, walkLeft, walkRight }
@@ -25,11 +27,11 @@ class Player extends SpriteAnimationGroupComponent
   Vector2 moveDirection = Vector2
       .zero(); // Hướng di chuyển (Giải thích: (a,b) = a cho hướng trái phải và b cho lên xuống)
   Vector2 velocity = Vector2
-      .zero(); // Vận tốc ban đầu khi không di chuyển = (0, 0) (Giải thích: do không di chuyển qua lại hoặc trái phải);
+      .zero(); // Vận tốc ban đầu khi không di chuyển = (0, 0) (Giải thích: do không di chuyển qua lại hoặc lên xuống);
   PlayerState playerState = PlayerState
       .idleRight; // Cho state mặc định của nhân vật là "đứng chờ quay mặt phải"
   PlayerFacing playerFacing =
-      PlayerFacing.right; // Cho hướng quay mặt mặc định là phải
+      PlayerFacing.right; // Cho hướng quay mặt mặc định là "phải"
 
   // Định nghĩa các SpriteAnimation
   late final SpriteAnimation idleLeftAnimation;
@@ -42,6 +44,56 @@ class Player extends SpriteAnimationGroupComponent
     // Những method và function được thêm vào đây sẽ được chạy khi game load
     _loadAllAnimation();
     return super.onLoad();
+  }
+
+  @override
+  void update(double dt) {
+    // Cập nhật game theo tick
+    _updatePlayerMovement(dt);
+    super.update(dt);
+  }
+
+  @override
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    // Bắt sự kiện ấn phím
+    // Mặc định
+    moveDirection = Vector2.zero();
+    // Nếu di chuyển lên bằng nút W hoặc nút ↑
+    final isUpKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyW) ||
+        keysPressed.contains(LogicalKeyboardKey.arrowUp);
+    // Nếu di chuyển xuống bằng nút S hoặc nút ↓
+    final isDownKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyS) ||
+        keysPressed.contains(LogicalKeyboardKey.arrowDown);
+    // Nếu di chuyển qua trái bằng nút A hoặc nút ←
+    final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyD) ||
+        keysPressed.contains(LogicalKeyboardKey.arrowLeft);
+    // Nếu di chuyển qua phải bằng nút D hoặc nút →
+    final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA) ||
+        keysPressed.contains(LogicalKeyboardKey.arrowRight);
+
+    // Xác định hướng di chuyển
+    moveDirection.y += isUpKeyPressed ? -1 : 0;
+    moveDirection.y += isDownKeyPressed ? 1 : 0;
+    moveDirection.x += isLeftKeyPressed ? -1 : 0;
+    moveDirection.x += isRightKeyPressed ? 1 : 0;
+
+    // Khi player di chuyển theo đường chéo
+    // Tính tổng độ dài vector
+    final magnitude = sqrt(pow(moveDirection.x, 2) + pow(moveDirection.y, 2));
+    if (magnitude > 0) {
+      // Chuẩn hóa vector
+      moveDirection.x /= magnitude;
+      moveDirection.y /= magnitude;
+    }
+
+    // Kiểm tra hướng quay của player
+    if (isLeftKeyPressed) {
+      playerFacing = PlayerFacing.left;
+    } else if (isRightKeyPressed) {
+      playerFacing = PlayerFacing.right;
+    }
+
+    return super.onKeyEvent(event, keysPressed);
   }
 
   void _loadAllAnimation() {
@@ -82,5 +134,14 @@ class Player extends SpriteAnimationGroupComponent
       spriteImages,
       animationData,
     );
+  }
+
+  void _updatePlayerMovement(double dt) {
+    // Vận tốc = hướng di chuyển * tốc độ di chuyển
+    velocity.x = moveDirection.x * moveSpeed;
+    velocity.y = moveDirection.y * moveSpeed;
+    // Vị trí sau khi di chuyển = Vận tốc * delta time
+    position.x += velocity.x * dt;
+    position.y += velocity.y * dt;
   }
 }

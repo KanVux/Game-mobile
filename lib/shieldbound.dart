@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:shieldbound/src/game_map.dart';
 import 'package:shieldbound/src/player.dart';
 
-class Shieldbound extends FlameGame {
+class Shieldbound extends FlameGame with HasKeyboardHandlerComponents {
   late final CameraComponent cam;
   final double windowWidth = 640;
   final double windowHeight = 360;
