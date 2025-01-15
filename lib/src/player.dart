@@ -40,7 +40,47 @@ class Player extends SpriteAnimationGroupComponent
   @override
   FutureOr<void> onLoad() {
     // Những method và function được thêm vào đây sẽ được chạy khi game load
-
+    _loadAllAnimation();
     return super.onLoad();
+  }
+
+  void _loadAllAnimation() {
+    // Load tất cả các Animation
+    idleLeftAnimation =
+        _spriteAnimation('Idle_Left', 6); // Animation đứng chờ trái
+    idleRightAnimation =
+        _spriteAnimation('Idle_Right', 6); // Animation đứng chờ phải
+    walkLeftAnimation =
+        _spriteAnimation('Walk_Left', 8); // Animation đi qua trái
+    walkRightAnimation =
+        _spriteAnimation('Walk_Right', 8); // Animation đi qua phải
+
+    // Gán các Animation cho các state của player
+    animations = {
+      PlayerState.idleLeft: idleLeftAnimation,
+      PlayerState.idleRight: idleRightAnimation,
+      PlayerState.walkLeft: walkLeftAnimation,
+      PlayerState.walkRight: walkRightAnimation,
+    };
+
+    // Đặt state/animation mặc định
+    current = PlayerState.idleRight;
+  }
+
+  SpriteAnimation _spriteAnimation(String state, int amount) {
+    // Load các ảnh của nhân vật $character đang ở trạng thái $state từ Cache
+    var spriteImages = game.images
+        .fromCache('Character/$character/$character/$character-$state.png');
+    // Lấy data từ Spritesheets theo kiểu sequenced với:
+    /*   amount: số lượng sprite trong một sheet(theo kiểu sequence),
+         stepTime: thời gian để chạy animation giữa các sprite trong sequence,
+         textureSize: là độ lớn của sprite */
+    var animationData = SpriteAnimationData.sequenced(
+        amount: amount, stepTime: stepTime, textureSize: vectorSize);
+
+    return SpriteAnimation.fromFrameData(
+      spriteImages,
+      animationData,
+    );
   }
 }
