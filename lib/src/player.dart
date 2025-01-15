@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/collision_block.dart';
+import 'package:shieldbound/src/collisions/custom_hitbox.dart';
+import 'package:shieldbound/src/utils.dart';
 
 enum PlayerState { idleLeft, idleRight, walkLeft, walkRight }
 
@@ -45,11 +48,21 @@ class Player extends SpriteAnimationGroupComponent
 
   // Các thông số phục vụ tính Collision
   List<CollisionBlock> collisionBlocks = [];
+  // Tạo hitbox tùy chọn cho player một cách chính xác hơn
+  CustomHitbox playerHitbox = CustomHitbox(
+    offset: Vector2(10, 10),
+    size: Vector2(10, 15),
+  );
   @override
   FutureOr<void> onLoad() {
     // Những method và function được thêm vào đây sẽ được chạy khi game load
     debugMode = isDebugModeActived;
     _loadAllAnimation();
+    // Thêm hitbox vào player
+    add(RectangleHitbox(
+      position: playerHitbox.offset,
+      size: playerHitbox.size,
+    ));
     return super.onLoad();
   }
 
@@ -58,6 +71,7 @@ class Player extends SpriteAnimationGroupComponent
     // Cập nhật game theo tick
     _updatePlayerMovement(dt);
     _updatePlayerState();
+    _checkCollision();
     super.update(dt);
   }
 
@@ -168,5 +182,45 @@ class Player extends SpriteAnimationGroupComponent
           : PlayerState.idleRight;
     }
     current = playerState;
+  }
+
+  void _checkCollision() {
+    for (final block in collisionBlocks) {
+      if (isCollided(this, block)) {
+        // Tính Overlap cho trục x
+        final double overlapX = (velocity.x > 0)
+            ? (position.x +
+                playerHitbox.size.x -
+                block.x) // Nếu đi qua bên phải
+            : (block.x + block.width - position.x); // Nếu đi qua bên trái
+        // Tính Overlap cho trục y
+        final double overlapY = (velocity.y > 0)
+            ? (position.y + playerHitbox.size.y - block.y) // Nếu đi lên trên
+            : (block.y + block.height - position.y); // Nếu đi xuống dưới
+
+        // Chọn Overlap nhỏ hơn để xử lý Collision
+        if (overlapX < overlapY) {
+          if (velocity.x > 0) {
+            // Nếu xảy ra collision ở bên phải của vật thể
+            position.x = block.x - playerHitbox.size.x - playerHitbox.offset.x;
+          } else if (velocity.x < 0) {
+            // Nếu xảy ra collision ở bên trái của vật thể
+            position.x = block.x + block.width - playerHitbox.offset.x;
+          }
+          // cho vận tốc trục x = 0 ngăng không cho di chuyển theo trục ngang
+          velocity.x = 0;
+        } else {
+          if (velocity.y > 0) {
+            // Nếu xảy ra collision ở bên dưới vật thể
+            position.y = block.y - playerHitbox.size.y - playerHitbox.offset.y;
+          } else if (velocity.y < 0) {
+            // Nếu xảy ra collision ở bên trên vật thể
+            position.y = block.y + block.height - playerHitbox.offset.y;
+          }
+          // cho vận tốc trục y = 0 ngăng không cho di chuyển theo trục dọc
+          velocity.y = 0;
+        }
+      }
+    }
   }
 }
