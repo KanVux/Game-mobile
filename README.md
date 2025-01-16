@@ -1,16 +1,8 @@
-# shieldbound
+# Project học phần Phát triển ứng dụng di động (CT484)
+Học kỳ 2, Năm học 2024-2025
 
-A new Flutter project.
+Tên dự án: Game RPG cho mobile 
 
-## Getting Started
+MSSV 1: B2111846
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Họ tên SV 1: Hà Vũ Khang
