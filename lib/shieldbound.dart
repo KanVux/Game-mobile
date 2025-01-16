@@ -16,7 +16,7 @@ class Shieldbound extends FlameGame
 
   Player player = Player(character: 'Soldier');
   late JoystickComponent joystick;
-  bool isJoystickActive = true;
+  bool isJoystickActive = false;
 
   @override
   FutureOr<void> onLoad() async {

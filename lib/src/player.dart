@@ -175,8 +175,9 @@ class Player extends SpriteAnimationGroupComponent
         _spriteAnimation('Walk_Left', 8); // Animation đi qua trái
     walkRightAnimation =
         _spriteAnimation('Walk_Right', 8); // Animation đi qua phải
-    attackRightAnimation = _spriteAnimation('Attack01_Right', 6, stepTime: 0.1);
-    attackLeftAnimation = _spriteAnimation('Attack01_Left', 6, stepTime: 0.1);
+    attackRightAnimation =
+        _spriteAnimation('Attack01_Right', 6, stepTime: 0.05);
+    attackLeftAnimation = _spriteAnimation('Attack01_Left', 6, stepTime: 0.05);
 
     // Gán các Animation cho các state của player
     animations = {
