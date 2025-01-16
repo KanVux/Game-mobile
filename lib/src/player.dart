@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flutter/services.dart';
 import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
@@ -10,9 +11,9 @@ import 'package:shieldbound/src/collisions/collision_block.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
 import 'package:shieldbound/src/utils.dart';
 
-enum PlayerState { idleLeft, idleRight, walkLeft, walkRight }
+enum PlayerState { idleLeft, idleRight, walkLeft, walkRight, hurt, die }
 
-enum PlayerAction { attack, hurt, die }
+enum PlayerAction { attack }
 
 enum PlayerFacing { left, right }
 
