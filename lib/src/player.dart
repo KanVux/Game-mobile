@@ -11,22 +11,27 @@ import 'package:shieldbound/src/collisions/collision_block.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
 import 'package:shieldbound/src/utils.dart';
 
-enum PlayerState { idleLeft, idleRight, walkLeft, walkRight, hurt, die }
-
-enum PlayerAction { attack }
+enum PlayerState {
+  idleLeft,
+  idleRight,
+  walkLeft,
+  walkRight,
+  attackRight,
+  attackLeft,
+  hurt,
+  die,
+}
 
 enum PlayerFacing { left, right }
 
 class Player extends SpriteAnimationGroupComponent
-    with HasGameRef<Shieldbound>, KeyboardHandler {
+    with HasGameRef<Shieldbound>, KeyboardHandler, TapCallbacks {
   // ignore: use_super_parameters
   Player({position, this.character = "Soldier"}) : super(position: position);
   String character;
 
   // Định nghĩa các params cho sprite
-  final playerHitboxSize = Vector2.all(22);
-  final vectorSize = Vector2.all(32);
-  final double stepTime = 0.1;
+  final vectorSize = Vector2.all(50);
 
   // Định nghĩa các thông số mặc định của nhân vật
   double moveSpeed = 100; // Tốc độ di chuyển mặc định
@@ -41,24 +46,45 @@ class Player extends SpriteAnimationGroupComponent
   PlayerFacing lastFacingDirection =
       PlayerFacing.right; // Hướng quay ở lần quay cuối (Mặc định là "phải")
 
+  // Trạng thái player
+  bool isDead = false;
+  bool isHurt = false;
+  bool isAttacking = false;
+  bool isAttackingAnimationPlaying = false;
   // Định nghĩa các SpriteAnimation
   late final SpriteAnimation idleLeftAnimation;
   late final SpriteAnimation idleRightAnimation;
   late final SpriteAnimation walkLeftAnimation;
   late final SpriteAnimation walkRightAnimation;
+  late final SpriteAnimation attackRightAnimation;
+  late final SpriteAnimation attackLeftAnimation;
 
   // Các thông số phục vụ tính Collision
   List<CollisionBlock> collisionBlocks = [];
   // Tạo hitbox tùy chọn cho player một cách chính xác hơn
   CustomHitbox playerHitbox = CustomHitbox(
-    offset: Vector2(10, 10),
+    offset: Vector2(20, 20),
     size: Vector2(10, 15),
   );
+  // Timer cho animation attack
+  late Timer attackTimer;
   @override
   FutureOr<void> onLoad() {
     // Những method và function được thêm vào đây sẽ được chạy khi game load
     debugMode = isDebugModeActived;
     _loadAllAnimation();
+
+    // Bắt đầu timer cho attack
+    attackTimer = Timer(
+      attackRightAnimation.totalDuration(),
+      onTick: () {
+        isAttacking = false;
+        isAttackingAnimationPlaying = false;
+        resetToIdleState();
+      },
+      repeat: false,
+    );
+
     // Thêm hitbox vào player
     add(RectangleHitbox(
       position: playerHitbox.offset,
@@ -70,6 +96,9 @@ class Player extends SpriteAnimationGroupComponent
   @override
   void update(double dt) {
     // Cập nhật game theo tick
+    if (isAttackingAnimationPlaying) {
+      attackTimer.update(dt);
+    }
     _updatePlayerMovement(dt);
     _updatePlayerState();
     _checkCollision();
@@ -93,6 +122,23 @@ class Player extends SpriteAnimationGroupComponent
     // Nếu di chuyển qua phải bằng nút D hoặc nút →
     final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA) ||
         keysPressed.contains(LogicalKeyboardKey.arrowLeft);
+    // Player tấn công
+    // Player attacks
+    if (!isAttackingAnimationPlaying &&
+        keysPressed.contains(LogicalKeyboardKey.space)) {
+      isAttacking = true;
+      isAttackingAnimationPlaying = true;
+
+      // Set attack state based on the last facing direction
+      playerState = lastFacingDirection == PlayerFacing.left
+          ? PlayerState.attackLeft
+          : PlayerState.attackRight;
+
+      current = playerState;
+
+      // Start the attack animation timer
+      attackTimer.start();
+    }
 
     // Xác định hướng di chuyển
     moveDirection.y += isUpKeyPressed ? -1 : 0;
@@ -129,6 +175,8 @@ class Player extends SpriteAnimationGroupComponent
         _spriteAnimation('Walk_Left', 8); // Animation đi qua trái
     walkRightAnimation =
         _spriteAnimation('Walk_Right', 8); // Animation đi qua phải
+    attackRightAnimation = _spriteAnimation('Attack01_Right', 6, stepTime: 0.1);
+    attackLeftAnimation = _spriteAnimation('Attack01_Left', 6, stepTime: 0.1);
 
     // Gán các Animation cho các state của player
     animations = {
@@ -136,13 +184,23 @@ class Player extends SpriteAnimationGroupComponent
       PlayerState.idleRight: idleRightAnimation,
       PlayerState.walkLeft: walkLeftAnimation,
       PlayerState.walkRight: walkRightAnimation,
+      PlayerState.attackRight: attackRightAnimation,
+      PlayerState.attackLeft: attackLeftAnimation,
     };
 
     // Đặt state/animation mặc định
     current = PlayerState.idleRight;
   }
 
-  SpriteAnimation _spriteAnimation(String state, int amount) {
+  void resetToIdleState() {
+    playerState = lastFacingDirection == PlayerFacing.left
+        ? PlayerState.idleLeft
+        : PlayerState.idleRight;
+    current = playerState;
+  }
+
+  SpriteAnimation _spriteAnimation(String state, int amount,
+      {double stepTime = 0.1}) {
     // Load các ảnh của nhân vật $character đang ở trạng thái $state từ Cache
     var spriteImages = game.images
         .fromCache('Characters/$character/$character/$character-$state.png');
@@ -160,6 +218,11 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _updatePlayerMovement(double dt) {
+    if (isAttackingAnimationPlaying) {
+      // Prevent movement when attacking
+      velocity = Vector2.zero();
+      return;
+    }
     // Vận tốc = hướng di chuyển * tốc độ di chuyển
     velocity.x = moveDirection.x * moveSpeed;
     velocity.y = moveDirection.y * moveSpeed;
@@ -169,6 +232,7 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _updatePlayerState() {
+    if (isAttackingAnimationPlaying) return;
     if (velocity.x < 0 ||
         (velocity.x < 0 && velocity.y != 0) ||
         (lastFacingDirection == PlayerFacing.left && velocity.y != 0)) {
@@ -177,11 +241,16 @@ class Player extends SpriteAnimationGroupComponent
         (velocity.x > 0 && velocity.y != 0) ||
         (lastFacingDirection == PlayerFacing.right && velocity.y != 0)) {
       playerState = PlayerState.walkRight;
+    } else if (isAttacking) {
+      playerState = lastFacingDirection == PlayerFacing.left
+          ? PlayerState.attackLeft
+          : PlayerState.attackRight;
     } else {
       playerState = lastFacingDirection == PlayerFacing.left
           ? PlayerState.idleLeft
           : PlayerState.idleRight;
     }
+
     current = playerState;
   }
 
@@ -223,5 +292,15 @@ class Player extends SpriteAnimationGroupComponent
         }
       }
     }
+  }
+}
+
+extension SpriteAnimationExtension on SpriteAnimation {
+  double totalDuration() {
+    double duration = 0;
+    for (final frame in frames) {
+      duration += frame.stepTime;
+    }
+    return duration;
   }
 }

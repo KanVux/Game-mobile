@@ -7,6 +7,7 @@ import 'package:shieldbound/shieldbound.dart';
 class Attack extends SpriteComponent
     with HasGameRef<Shieldbound>, TapCallbacks {
   Attack();
+  // TODO: Sửa lại attack button cho mobile divces
   final margin = 32; // Đệm nút
   final buttonSize = 100; // Kích thước nút
 
@@ -34,6 +35,7 @@ class Attack extends SpriteComponent
   @override
   void onTapDown(TapDownEvent event) {
     // Xử lý khi nút bấm
+    game.player.isAttacking = true;
     sprite = attackButtonActive;
     super.onTapDown(event);
   }
@@ -41,6 +43,7 @@ class Attack extends SpriteComponent
   @override
   void onTapUp(TapUpEvent event) {
     // Xử lý khi thả nút
+    game.player.isAttacking = false;
     sprite = attackButton;
     super.onTapUp(event);
   }
@@ -48,6 +51,7 @@ class Attack extends SpriteComponent
   @override
   void onTapCancel(TapCancelEvent event) {
     // Xử lý khi hủy thao tác (Đè và kéo ra ngoài khu vực nút)
+    game.player.isAttacking = false;
     sprite = attackButton;
     super.onTapCancel(event);
   }

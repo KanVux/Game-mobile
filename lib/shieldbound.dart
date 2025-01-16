@@ -4,10 +4,12 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:shieldbound/src/attack.dart';
 import 'package:shieldbound/src/game_map.dart';
 import 'package:shieldbound/src/player.dart';
 
-class Shieldbound extends FlameGame with HasKeyboardHandlerComponents {
+class Shieldbound extends FlameGame
+    with HasKeyboardHandlerComponents, DragCallbacks {
   late final CameraComponent cam;
   final double windowWidth = 640;
   final double windowHeight = 360;
@@ -46,6 +48,7 @@ class Shieldbound extends FlameGame with HasKeyboardHandlerComponents {
     addAll([cam, gameMap]);
     if (isJoystickActive) {
       addJoystick();
+      cam.viewport.add(Attack());
     }
     return super.onLoad();
   }
@@ -79,7 +82,7 @@ class Shieldbound extends FlameGame with HasKeyboardHandlerComponents {
   }
 
   void updateJoystick() {
-    // TODO: Sửa lại joystick control cho mobile
+    // TODO: Sửa lại joystick control cho mobile devices
     switch (joystick.direction) {
       case JoystickDirection.up:
         player.moveDirection.y = -1;
