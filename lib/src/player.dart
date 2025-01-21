@@ -101,7 +101,7 @@ class Player extends SpriteAnimationGroupComponent
     }
     _updatePlayerMovement(dt);
     _updatePlayerState();
-    _checkCollision();
+    _checkCollisionAndResolve();
     super.update(dt);
   }
 
@@ -255,41 +255,29 @@ class Player extends SpriteAnimationGroupComponent
     current = playerState;
   }
 
-  void _checkCollision() {
+  void _checkCollisionAndResolve() {
     for (final block in collisionBlocks) {
-      if (isCollided(this, block)) {
-        // Tính Overlap cho trục x
-        final double overlapX = (velocity.x > 0)
-            ? (position.x +
-                playerHitbox.size.x -
-                block.x) // Nếu đi qua bên phải
-            : (block.x + block.width - position.x); // Nếu đi qua bên trái
-        // Tính Overlap cho trục y
-        final double overlapY = (velocity.y > 0)
-            ? (position.y + playerHitbox.size.y - block.y) // Nếu đi lên trên
-            : (block.y + block.height - position.y); // Nếu đi xuống dưới
+      final collision = checkCollisionWithBlock(this, block);
 
-        // Chọn Overlap nhỏ hơn để xử lý Collision
-        if (overlapX < overlapY) {
-          if (velocity.x > 0) {
-            // Nếu xảy ra collision ở bên phải của vật thể
-            position.x = block.x - playerHitbox.size.x - playerHitbox.offset.x;
-          } else if (velocity.x < 0) {
-            // Nếu xảy ra collision ở bên trái của vật thể
-            position.x = block.x + block.width - playerHitbox.offset.x;
-          }
-          // cho vận tốc trục x = 0 ngăng không cho di chuyển theo trục ngang
-          velocity.x = 0;
-        } else {
-          if (velocity.y > 0) {
-            // Nếu xảy ra collision ở bên dưới vật thể
+      if (collision.isCollided) {
+        // Resolve collision based on the side
+        switch (collision.collisionSide) {
+          case "top":
             position.y = block.y - playerHitbox.size.y - playerHitbox.offset.y;
-          } else if (velocity.y < 0) {
-            // Nếu xảy ra collision ở bên trên vật thể
+            velocity.y = 0; // Stop downward movement
+            break;
+          case "bottom":
             position.y = block.y + block.height - playerHitbox.offset.y;
-          }
-          // cho vận tốc trục y = 0 ngăng không cho di chuyển theo trục dọc
-          velocity.y = 0;
+            velocity.y = 0; // Stop upward movement
+            break;
+          case "left":
+            position.x = block.x - playerHitbox.size.x - playerHitbox.offset.x;
+            velocity.x = 0; // Stop leftward movement
+            break;
+          case "right":
+            position.x = block.x + block.width - playerHitbox.offset.x;
+            velocity.x = 0; // Stop rightward movement
+            break;
         }
       }
     }
