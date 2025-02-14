@@ -3,14 +3,16 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/collision_block.dart';
+import 'package:shieldbound/src/enemy.dart';
 import 'package:shieldbound/src/player.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 
 class GameMap extends World with HasGameRef<Shieldbound> {
   final String mapName; // Tên của map
   final Player player; //  Khai báo một player cho một map
+  final Enemy enemy;
   final Vector2 gridSize = Vector2.all(16); // Grid size của map 16x16 ô
-  GameMap({required this.mapName, required this.player});
+  GameMap({required this.mapName, required this.player, required this.enemy});
 
   @override
   FutureOr<void> onLoad() async {
@@ -38,6 +40,10 @@ class GameMap extends World with HasGameRef<Shieldbound> {
             player.position = Vector2(spawnPoint.x, spawnPoint.y);
             add(player);
             break;
+          case 'Enemy':
+            enemy.position = Vector2(spawnPoint.x, spawnPoint.y);
+            add(enemy);
+            break;
         }
       }
     }
@@ -62,5 +68,21 @@ class GameMap extends World with HasGameRef<Shieldbound> {
     }
     player.collisionBlocks = collisionBlocks;
     return super.onLoad();
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    // Lấy danh sách các entity có thể thay đổi thứ tự render
+    final sortedChildren = children
+        .whereType<PositionComponent>()
+        .toList() // Chuyển thành danh sách có thể sắp xếp
+      ..sort((a, b) => a.y.compareTo(b.y)); // Sắp xếp theo y
+
+    // Cập nhật thứ tự render
+    for (var i = 0; i < sortedChildren.length; i++) {
+      sortedChildren[i].priority = i;
+    }
   }
 }

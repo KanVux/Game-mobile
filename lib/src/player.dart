@@ -9,6 +9,7 @@ import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/collision_block.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
+import 'package:shieldbound/src/collisions/sword_slash_attack.dart';
 import 'package:shieldbound/src/utils.dart';
 
 enum PlayerState {
@@ -18,23 +19,35 @@ enum PlayerState {
   walkRight,
   attackRight,
   attackLeft,
-  hurt,
-  die,
+  hurtLeft,
+  hurtRight,
+  deathRight,
+  deathLeft,
 }
 
 enum PlayerFacing { left, right }
 
 class Player extends SpriteAnimationGroupComponent
-    with HasGameRef<Shieldbound>, KeyboardHandler, TapCallbacks {
-  // ignore: use_super_parameters
-  Player({position, this.character = "Soldier"}) : super(position: position);
-  String character;
-
-  // Định nghĩa các params cho sprite
-  final vectorSize = Vector2.all(50);
+    with
+        HasGameRef<Shieldbound>,
+        KeyboardHandler,
+        TapCallbacks,
+        CollisionCallbacks {
+  Player({
+    required this.health,
+    required this.damage,
+    required this.moveSpeed,
+    super.position,
+    required this.character,
+  }) : super();
 
   // Định nghĩa các thông số mặc định của nhân vật
-  double moveSpeed = 100; // Tốc độ di chuyển mặc định
+  final String character;
+  double moveSpeed;
+  double health;
+  double damage;
+
+  // XỬ LÝ DI CHUYỂN VÀ TRẠNG THÁI
   Vector2 moveDirection = Vector2
       .zero(); // Hướng di chuyển (Giải thích: (a,b) = a cho hướng trái phải và b cho lên xuống)
   Vector2 velocity = Vector2
@@ -46,11 +59,12 @@ class Player extends SpriteAnimationGroupComponent
   PlayerFacing lastFacingDirection =
       PlayerFacing.right; // Hướng quay ở lần quay cuối (Mặc định là "phải")
 
-  // Trạng thái player
+  // Flag trạng thái
   bool isDead = false;
   bool isHurt = false;
   bool isAttacking = false;
   bool isAttackingAnimationPlaying = false;
+
   // Định nghĩa các SpriteAnimation
   late final SpriteAnimation idleLeftAnimation;
   late final SpriteAnimation idleRightAnimation;
@@ -58,22 +72,29 @@ class Player extends SpriteAnimationGroupComponent
   late final SpriteAnimation walkRightAnimation;
   late final SpriteAnimation attackRightAnimation;
   late final SpriteAnimation attackLeftAnimation;
+  late final SpriteAnimation hurtLeftAnimation;
+  late final SpriteAnimation hurtRightAnimation;
+  late final SpriteAnimation deathLeftAnimation;
+  late final SpriteAnimation deathRightAnimation;
 
-  // Các thông số phục vụ tính Collision
+  // Danh sách các block có thể va chạm
   List<CollisionBlock> collisionBlocks = [];
-  // Tạo hitbox tùy chọn cho player một cách chính xác hơn
+
+  // Hitbox đúng của nhân vật
   CustomHitbox playerHitbox = CustomHitbox(
     offset: Vector2(20, 20),
     size: Vector2(10, 15),
   );
+
   // Timer cho animation attack
   late Timer attackTimer;
+
   @override
-  FutureOr<void> onLoad() {
+  FutureOr<void> onLoad() async {
     // Những method và function được thêm vào đây sẽ được chạy khi game load
     debugMode = isDebugModeActived;
-    _loadAllAnimation();
-
+    // Load Animation
+    await _loadAllAnimation();
     // Bắt đầu timer cho attack
     attackTimer = Timer(
       attackRightAnimation.totalDuration(),
@@ -101,7 +122,7 @@ class Player extends SpriteAnimationGroupComponent
     }
     _updatePlayerMovement(dt);
     _updatePlayerState();
-    _checkCollisionAndResolve();
+    _onCollision();
     super.update(dt);
   }
 
@@ -135,11 +156,14 @@ class Player extends SpriteAnimationGroupComponent
           : PlayerState.attackRight;
 
       current = playerState;
+      // Call the attack
+      Future.delayed(Duration(milliseconds: (300).toInt()), () {
+        spawnSwordSlashAttack();
+      });
 
       // Start the attack animation timer
       attackTimer.start();
     }
-
     // Xác định hướng di chuyển
     moveDirection.y += isUpKeyPressed ? -1 : 0;
     moveDirection.y += isDownKeyPressed ? 1 : 0;
@@ -165,21 +189,21 @@ class Player extends SpriteAnimationGroupComponent
     return super.onKeyEvent(event, keysPressed);
   }
 
-  void _loadAllAnimation() {
-    // Load tất cả các Animation
-    idleLeftAnimation =
-        _spriteAnimation('Idle_Left', 6); // Animation đứng chờ trái
-    idleRightAnimation =
-        _spriteAnimation('Idle_Right', 6); // Animation đứng chờ phải
-    walkLeftAnimation =
-        _spriteAnimation('Walk_Left', 8); // Animation đi qua trái
-    walkRightAnimation =
-        _spriteAnimation('Walk_Right', 8); // Animation đi qua phải
-    attackRightAnimation =
-        _spriteAnimation('Attack01_Right', 6, stepTime: 0.05);
-    attackLeftAnimation = _spriteAnimation('Attack01_Left', 6, stepTime: 0.05);
+  Future<void> _loadAllAnimation() async {
+    var loadedAnimations = await _loadAnimations(character);
 
-    // Gán các Animation cho các state của player
+    // Gán animation đã load vào các biến tương ứng
+    idleLeftAnimation = loadedAnimations[PlayerState.idleLeft]!;
+    idleRightAnimation = loadedAnimations[PlayerState.idleRight]!;
+    walkLeftAnimation = loadedAnimations[PlayerState.walkLeft]!;
+    walkRightAnimation = loadedAnimations[PlayerState.walkRight]!;
+    attackRightAnimation = loadedAnimations[PlayerState.attackRight]!;
+    attackLeftAnimation = loadedAnimations[PlayerState.attackLeft]!;
+    hurtRightAnimation = loadedAnimations[PlayerState.hurtRight]!;
+    hurtLeftAnimation = loadedAnimations[PlayerState.hurtLeft]!;
+    deathRightAnimation = loadedAnimations[PlayerState.deathRight]!;
+    deathLeftAnimation = loadedAnimations[PlayerState.deathLeft]!;
+    // Gán lại vào danh sách animations của player
     animations = {
       PlayerState.idleLeft: idleLeftAnimation,
       PlayerState.idleRight: idleRightAnimation,
@@ -187,35 +211,62 @@ class Player extends SpriteAnimationGroupComponent
       PlayerState.walkRight: walkRightAnimation,
       PlayerState.attackRight: attackRightAnimation,
       PlayerState.attackLeft: attackLeftAnimation,
+      PlayerState.hurtLeft: hurtLeftAnimation,
+      PlayerState.hurtRight: hurtRightAnimation,
+      PlayerState.deathLeft: deathLeftAnimation,
+      PlayerState.deathRight: deathRightAnimation,
     };
 
-    // Đặt state/animation mặc định
+    // Đặt state mặc định
     current = PlayerState.idleRight;
   }
 
+  Future<Map<PlayerState, SpriteAnimation>> _loadAnimations(
+      String character) async {
+    Map<PlayerState, SpriteAnimation> animations = {};
+
+    const animationTypes = {
+      PlayerState.walkLeft: 'Walk',
+      PlayerState.walkRight: 'Walk',
+      PlayerState.idleLeft: 'Idle',
+      PlayerState.idleRight: 'Idle',
+      PlayerState.attackLeft: 'Attack01',
+      PlayerState.attackRight: 'Attack01',
+      PlayerState.hurtLeft: 'Hurt',
+      PlayerState.hurtRight: 'Hurt',
+      PlayerState.deathLeft: 'Death',
+      PlayerState.deathRight: 'Death',
+    };
+
+    for (var entry in animationTypes.entries) {
+      var state = entry.key;
+      var action = entry.value;
+
+      String direction = (state.toString().contains('Left')) ? 'Left' : 'Right';
+      String animationPath =
+          'Characters/$character/$character/$character-$action'
+          '_$direction.png';
+      var image = await gameRef.images.load(animationPath);
+      int frameCount = image.width ~/ 50;
+      animations[state] = SpriteAnimation.fromFrameData(
+        gameRef.images.fromCache(animationPath),
+        SpriteAnimationData.sequenced(
+          amount: frameCount,
+          stepTime: 0.1,
+          textureSize: Vector2.all(50),
+        ),
+      );
+    }
+    return animations;
+  }
+
   void resetToIdleState() {
+    // Reset trạng thái nhân vật về idle
     playerState = lastFacingDirection == PlayerFacing.left
         ? PlayerState.idleLeft
         : PlayerState.idleRight;
+
     current = playerState;
-  }
-
-  SpriteAnimation _spriteAnimation(String state, int amount,
-      {double stepTime = 0.1}) {
-    // Load các ảnh của nhân vật $character đang ở trạng thái $state từ Cache
-    var spriteImages = game.images
-        .fromCache('Characters/$character/$character/$character-$state.png');
-    // Lấy data từ Spritesheets theo kiểu sequenced với:
-    /*   amount: số lượng sprite trong một sheet(theo kiểu sequence),
-         stepTime: thời gian để chạy animation giữa các sprite trong sequence,
-         textureSize: là độ lớn của sprite */
-    var animationData = SpriteAnimationData.sequenced(
-        amount: amount, stepTime: stepTime, textureSize: vectorSize);
-
-    return SpriteAnimation.fromFrameData(
-      spriteImages,
-      animationData,
-    );
   }
 
   void _updatePlayerMovement(double dt) {
@@ -255,7 +306,7 @@ class Player extends SpriteAnimationGroupComponent
     current = playerState;
   }
 
-  void _checkCollisionAndResolve() {
+  void _onCollision() {
     for (final block in collisionBlocks) {
       final collision = checkCollisionWithBlock(this, block);
 
@@ -281,6 +332,79 @@ class Player extends SpriteAnimationGroupComponent
         }
       }
     }
+  }
+
+  void _onHit(double damageTaken) {
+    // Nếu người chơi đã chết, không xử lý thêm
+    if (isDead) return;
+
+    // Trừ máu
+    health -= damageTaken;
+
+    // Kiểm tra nếu máu hết
+    if (health <= 0) {
+      health = 0;
+      isDead = true;
+      // Chọn animation chết dựa trên hướng quay cuối cùng
+      playerState = lastFacingDirection == PlayerFacing.left
+          ? PlayerState.deathLeft
+          : PlayerState.deathRight;
+      current = playerState;
+
+      // Các logic khác cho trường hợp chết...
+    } else {
+      // Nếu còn sống, chuyển sang trạng thái bị thương (hurt)
+      isHurt = true;
+      playerState = lastFacingDirection == PlayerFacing.left
+          ? PlayerState.hurtLeft
+          : PlayerState.hurtRight;
+      current = playerState;
+
+      // Lấy thời gian của animation hurt tương ứng
+      double hurtDuration = lastFacingDirection == PlayerFacing.left
+          ? hurtLeftAnimation.totalDuration()
+          : hurtRightAnimation.totalDuration();
+
+      // Sau khi animation hurt kết thúc, quay lại trạng thái idle
+      Future.delayed(Duration(milliseconds: (hurtDuration * 1000).toInt()), () {
+        isHurt = false;
+        resetToIdleState();
+      });
+    }
+  }
+
+  void spawnSwordSlashAttack() {
+    // Tính toán vị trí của đòn chém dựa theo hướng của nhân vật
+    Vector2 attackPosition;
+    if (lastFacingDirection == PlayerFacing.right) {
+      // Ví dụ: đặt hitbox ở bên phải của nhân vật
+      attackPosition = Vector2(
+          playerHitbox.offset.x,
+          playerHitbox.offset.y -
+              playerHitbox.size.y / 2); // điều chỉnh theo yêu cầu
+    } else {
+      // Nếu hướng trái, đặt hitbox bên trái
+      attackPosition = Vector2(
+          playerHitbox.offset.x - (playerHitbox.size.x + 6),
+          playerHitbox.offset.y - playerHitbox.size.y / 2);
+    }
+
+    // Lấy sát thương cho đòn chém từ thuộc tính damage của nhân vật (hoặc có thể là thuộc tính riêng của vũ khí)
+    double slashDamage = damage; // có thể điều chỉnh sau này dễ dàng
+
+    // Tạo instance của SwordSlashAttack
+    SwordSlashAttack swordSlash = SwordSlashAttack(
+      damage: slashDamage,
+      position: attackPosition,
+    );
+
+    // Thêm SwordSlashAttack vào cây component của Player hoặc gameRef tùy theo cách tổ chức của bạn
+    add(swordSlash);
+
+    // Nếu muốn, tự động xóa hitbox sau một khoảng thời gian ngắn (ví dụ: 200ms) nếu không có va chạm xảy ra
+    Future.delayed(Duration(milliseconds: 200), () {
+      swordSlash.removeFromParent();
+    });
   }
 }
 
