@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:shieldbound/shieldbound.dart';
+import 'package:shieldbound/src/collisions/custom_hitbox.dart';
 
 class Attack extends SpriteComponent
     with HasGameRef<Shieldbound>, TapCallbacks {
@@ -15,6 +16,11 @@ class Attack extends SpriteComponent
   late final Sprite attackButton; // Trạng thái mặc định
   late final Sprite attackButtonActive; // Trạng thái được kích hoạt
 
+  // Hitbox cho đòn tấn công
+  CustomHitbox atkHitbox = CustomHitbox(
+    offset: Vector2.all(5),
+    size: Vector2.all(10),
+  );
   @override
   FutureOr<void> onLoad() {
     // Thêm nút tấn công cho người chơi trên thiết bị di động
