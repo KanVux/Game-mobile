@@ -1,8 +1,6 @@
 import 'package:flame/flame.dart';
-import 'package:flame/game.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shieldbound/shieldbound.dart';
+import 'package:shieldbound/src/ui/menu/main_menu.dart';
 
 bool isDebugModeActived = true;
 
@@ -11,6 +9,17 @@ void main() async {
   await Flame.device.fullScreen();
   await Flame.device.setLandscape();
 
-  Shieldbound game = Shieldbound();
-  runApp(GameWidget(game: kDebugMode ? Shieldbound() : game));
+  runApp(const MyApp());
+}
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'ShieldBound RPG',
+      home: MainMenu(), // Start with the Main Menu
+    );
+  }
 }
