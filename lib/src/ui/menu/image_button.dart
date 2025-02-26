@@ -11,8 +11,8 @@ class ImageButton extends StatefulWidget {
     required this.pressedImagePath,
     required this.text,
     required this.onPressed,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  }) : super();
 
   @override
   _ImageButtonState createState() => _ImageButtonState();
@@ -41,7 +41,7 @@ class _ImageButtonState extends State<ImageButton> {
 
           // Button Text - Positioned slightly higher
           Positioned(
-            top: 10, // Adjust this value to move text higher
+            top: 13, // Adjust this value to move text higher
             child: Text(
               widget.text,
               style: TextStyle(
@@ -52,7 +52,7 @@ class _ImageButtonState extends State<ImageButton> {
                 shadows: [
                   Shadow(
                     blurRadius: 5,
-                    color: Colors.black.withOpacity(0.7),
+                    color: Colors.black.withValues(alpha: 0.7),
                     offset: Offset(2, 2),
                   ),
                 ],

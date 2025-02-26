@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:shieldbound/src/ui/menu/image_button.dart';
-import '../../../shieldbound.dart';// Import the new ImageButton
+import '../../../shieldbound.dart'; // Import the new ImageButton
 
 class MainMenu extends StatelessWidget {
+  const MainMenu({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,17 +23,30 @@ class MainMenu extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  'ShieldBound RPG',
-                  style: TextStyle(
-                    fontFamily: 'MedievalSharp',
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/UI/Ribbons/Ribbon_Blue_3Slides.png',
+                      width: 450,
+                      height: 150,
+                      fit: BoxFit.contain,
+                    ),
+                    Positioned(
+                      top: 35,
+                      child: Text(
+                        'SHIELDBOUND',
+                        style: TextStyle(
+                          fontFamily: 'MedievalSharp',
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                  ],
                 ),
                 SizedBox(height: 20),
-
                 // Start Game Button
                 ImageButton(
                   imagePath: 'assets/images/UI/Buttons/Button_Blue_3Slides.png',
@@ -42,8 +56,20 @@ class MainMenu extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => GameWidget(game: Shieldbound()),
+                      PageRouteBuilder(
+                        transitionDuration: Duration(seconds: 4),
+                        pageBuilder: (context, animation, secondaryAnimation) {
+                          return Stack(
+                            children: [
+                              GameWidget(game: Shieldbound()),
+                              FadeTransition(
+                                opacity: Tween<double>(begin: 1, end: 0)
+                                    .animate(animation),
+                                child: Container(color: Colors.black),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     );
                   },

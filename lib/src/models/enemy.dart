@@ -187,7 +187,7 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
       position: attackPosition,
     );
 
-    // Thêm SwordSlashAttack vào cây component của Player hoặc gameRef tùy theo cách tổ chức của bạn
+    // Thêm SwordSlashAttack vào cây component của Player hoặc gameRef tùy theo cách tổ chức
     add(meleeSlash);
 
     // Nếu muốn, tự động xóa hitbox sau một khoảng thời gian ngắn (ví dụ: 200ms) nếu không có va chạm xảy ra
