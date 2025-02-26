@@ -3,16 +3,16 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/collision_block.dart';
-import 'package:shieldbound/src/enemy.dart';
-import 'package:shieldbound/src/player.dart';
+import 'package:shieldbound/src/models/player.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+
+import 'models/enermies_classes/orc.dart';
 
 class GameMap extends World with HasGameRef<Shieldbound> {
   final String mapName; // Tên của map
   final Player player; //  Khai báo một player cho một map
-  final Enemy enemy;
   final Vector2 gridSize = Vector2.all(16); // Grid size của map 16x16 ô
-  GameMap({required this.mapName, required this.player, required this.enemy});
+  GameMap({required this.mapName, required this.player});
 
   @override
   FutureOr<void> onLoad() async {
@@ -34,15 +34,23 @@ class GameMap extends World with HasGameRef<Shieldbound> {
     // Kiểm tra sự tồn tại của Layer, làm hết cho các layer được thêm vào
     if (spawnPointLayer != null) {
       for (final spawnPoint in spawnPointLayer.objects) {
-        // Duyệt qua các object nhận được từ layer này
         switch (spawnPoint.class_) {
-          case 'Player': // Nếu lớp (Class) của object lấy được là Player thì spawn player vào vị trí của spawnPoint
+          case 'Player':
             player.position = Vector2(spawnPoint.x, spawnPoint.y);
             add(player);
             break;
-          case 'Enemy':
-            enemy.position = Vector2(spawnPoint.x, spawnPoint.y);
-            add(enemy);
+          case 'Enemy': // Spawn Enemy dựa vào name
+            final enemyClassMap = {
+              'Orc': () => Orc(position: Vector2(spawnPoint.x, spawnPoint.y)),
+              // Sau này có thể thêm nhiều loại enemy khác vào đây
+            };
+
+            if (enemyClassMap.containsKey(spawnPoint.name)) {
+              final enemyInstance = enemyClassMap[spawnPoint.name]!();
+              add(enemyInstance);
+            } else {
+              print('Không tìm thấy enemy với name: ${spawnPoint.name}');
+            }
             break;
         }
       }

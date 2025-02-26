@@ -9,8 +9,8 @@ import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/collision_block.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
-import 'package:shieldbound/src/collisions/sword_slash_attack.dart';
-import 'package:shieldbound/src/utils.dart';
+import 'package:shieldbound/src/utils/damageable.dart';
+import 'package:shieldbound/src/collisions/utils.dart';
 
 enum PlayerState {
   idleLeft,
@@ -32,7 +32,8 @@ class Player extends SpriteAnimationGroupComponent
         HasGameRef<Shieldbound>,
         KeyboardHandler,
         TapCallbacks,
-        CollisionCallbacks {
+        CollisionCallbacks
+    implements Damageable {
   Player({
     required this.health,
     required this.damage,
@@ -147,6 +148,7 @@ class Player extends SpriteAnimationGroupComponent
     // Player attacks
     if (!isAttackingAnimationPlaying &&
         keysPressed.contains(LogicalKeyboardKey.space)) {
+      attack();
       isAttacking = true;
       isAttackingAnimationPlaying = true;
 
@@ -156,10 +158,6 @@ class Player extends SpriteAnimationGroupComponent
           : PlayerState.attackRight;
 
       current = playerState;
-      // Call the attack
-      Future.delayed(Duration(milliseconds: (300).toInt()), () {
-        spawnSwordSlashAttack();
-      });
 
       // Start the attack animation timer
       attackTimer.start();
@@ -334,7 +332,8 @@ class Player extends SpriteAnimationGroupComponent
     }
   }
 
-  void _onHit(double damageTaken) {
+  @override
+  void takeDamage(double damageTaken) {
     // Nếu người chơi đã chết, không xử lý thêm
     if (isDead) return;
 
@@ -350,7 +349,6 @@ class Player extends SpriteAnimationGroupComponent
           ? PlayerState.deathLeft
           : PlayerState.deathRight;
       current = playerState;
-
       // Các logic khác cho trường hợp chết...
     } else {
       // Nếu còn sống, chuyển sang trạng thái bị thương (hurt)
@@ -373,39 +371,8 @@ class Player extends SpriteAnimationGroupComponent
     }
   }
 
-  void spawnSwordSlashAttack() {
-    // Tính toán vị trí của đòn chém dựa theo hướng của nhân vật
-    Vector2 attackPosition;
-    if (lastFacingDirection == PlayerFacing.right) {
-      // Ví dụ: đặt hitbox ở bên phải của nhân vật
-      attackPosition = Vector2(
-          playerHitbox.offset.x,
-          playerHitbox.offset.y -
-              playerHitbox.size.y / 2); // điều chỉnh theo yêu cầu
-    } else {
-      // Nếu hướng trái, đặt hitbox bên trái
-      attackPosition = Vector2(
-          playerHitbox.offset.x - (playerHitbox.size.x + 6),
-          playerHitbox.offset.y - playerHitbox.size.y / 2);
-    }
-
-    // Lấy sát thương cho đòn chém từ thuộc tính damage của nhân vật (hoặc có thể là thuộc tính riêng của vũ khí)
-    double slashDamage = damage; // có thể điều chỉnh sau này dễ dàng
-
-    // Tạo instance của SwordSlashAttack
-    SwordSlashAttack swordSlash = SwordSlashAttack(
-      damage: slashDamage,
-      position: attackPosition,
-    );
-
-    // Thêm SwordSlashAttack vào cây component của Player hoặc gameRef tùy theo cách tổ chức của bạn
-    add(swordSlash);
-
-    // Nếu muốn, tự động xóa hitbox sau một khoảng thời gian ngắn (ví dụ: 200ms) nếu không có va chạm xảy ra
-    Future.delayed(Duration(milliseconds: 200), () {
-      swordSlash.removeFromParent();
-    });
-  }
+  // Overide ở lớp con
+  void attack() {}
 }
 
 extension SpriteAnimationExtension on SpriteAnimation {

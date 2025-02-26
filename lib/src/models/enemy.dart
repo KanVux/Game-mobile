@@ -4,7 +4,8 @@ import 'package:flame/components.dart';
 import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
-import 'package:shieldbound/src/damageable.dart';
+import 'package:shieldbound/src/collisions/attack/enemy/enemy_melee_attack.dart';
+import 'package:shieldbound/src/utils/damageable.dart';
 
 enum EnemyState {
   idleLeft,
@@ -17,6 +18,11 @@ enum EnemyState {
   hurtRight,
   deathRight,
   deathLeft,
+}
+
+enum EnemyFacing {
+  left,
+  right,
 }
 
 class Enemy extends SpriteAnimationGroupComponent<EnemyState>
@@ -36,7 +42,7 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
   double damage;
   double moveSpeed;
   Vector2 vectorSize = Vector2.all(50);
-
+  EnemyFacing lastFacingDirection = EnemyFacing.right;
   // Ví dụ về vận tốc, hướng di chuyển (có thể bổ sung logic di chuyển sau)
   double speed = 100;
   Vector2 velocity = Vector2.zero();
@@ -102,7 +108,7 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
 
   @override
   void takeDamage(double damageTaken) {
-    print("Enemy nhận sát thương: $damageTaken");
+    print("$enemyName nhận sát thương: $damageTaken");
     health -= damageTaken;
 
     if (health <= 0) {
@@ -156,6 +162,38 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
         );
       }
     }
+  }
+
+  void spawnMeleeAttack() {
+    // Tính toán vị trí của đòn chém dựa theo hướng của nhân vật
+    Vector2 attackPosition;
+    if (lastFacingDirection == EnemyFacing.right) {
+      // Ví dụ: đặt hitbox ở bên phải của nhân vật
+      attackPosition = Vector2(
+          enemyHitbox.offset.x,
+          enemyHitbox.offset.y -
+              enemyHitbox.size.y / 2); // điều chỉnh theo yêu cầu
+    } else {
+      // Nếu hướng trái, đặt hitbox bên trái
+      attackPosition = Vector2(enemyHitbox.offset.x - (enemyHitbox.size.x + 6),
+          enemyHitbox.offset.y - enemyHitbox.size.y / 2);
+    }
+    // Lấy sát thương cho đòn chém từ thuộc tính damage của nhân vật (hoặc có thể là thuộc tính riêng của vũ khí)
+    double meleeDamage = damage; // có thể điều chỉnh sau này dễ dàng
+
+    // Tạo instance của SwordSlashAttack
+    EnemyMeleeAttack meleeSlash = EnemyMeleeAttack(
+      damage: meleeDamage,
+      position: attackPosition,
+    );
+
+    // Thêm SwordSlashAttack vào cây component của Player hoặc gameRef tùy theo cách tổ chức của bạn
+    add(meleeSlash);
+
+    // Nếu muốn, tự động xóa hitbox sau một khoảng thời gian ngắn (ví dụ: 200ms) nếu không có va chạm xảy ra
+    Future.delayed(Duration(milliseconds: 200), () {
+      meleeSlash.removeFromParent();
+    });
   }
 }
 

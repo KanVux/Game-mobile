@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:shieldbound/src/collisions/collision_block.dart';
-import 'package:shieldbound/src/player.dart';
+import 'package:shieldbound/src/models/player.dart';
 
 class CollisionInfo {
   final bool isCollided;

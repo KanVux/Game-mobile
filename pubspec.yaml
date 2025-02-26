@@ -73,6 +73,8 @@ flutter:
     # Character assets
     - assets/images/Characters/Soldier/Soldier/
     - assets/images/Characters/Orc/Orc/
+    - assets/images/Characters/Wizard/Wizard/
+    - assets/images/Characters/Wizard/effect/
 
     # Hub assets
     - assets/images/Hub/

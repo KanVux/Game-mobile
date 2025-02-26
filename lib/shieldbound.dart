@@ -4,12 +4,10 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:shieldbound/src/attack.dart';
-import 'package:shieldbound/src/enemy.dart';
+import 'package:shieldbound/src/models/hero_classes/wizard.dart';
+import 'package:shieldbound/src/ui/mobile/attack.dart';
 import 'package:shieldbound/src/game_map.dart';
-import 'package:shieldbound/src/hero_classes/orc.dart';
-import 'package:shieldbound/src/hero_classes/soilder.dart';
-import 'package:shieldbound/src/player.dart';
+import 'package:shieldbound/src/models/player.dart';
 
 class Shieldbound extends FlameGame
     with HasKeyboardHandlerComponents, DragCallbacks, HasCollisionDetection {
@@ -17,9 +15,7 @@ class Shieldbound extends FlameGame
   final double windowWidth = 640;
   final double windowHeight = 360;
 
-  Player player = Soldier();
-  Enemy enemy =
-      Enemy(health: 100, moveSpeed: 10, damage: 10, enemyName: 'Soldier');
+  Player player = Wizard();
   late JoystickComponent joystick;
   bool isJoystickActive = false;
 
@@ -34,7 +30,6 @@ class Shieldbound extends FlameGame
     final gameMap = GameMap(
       mapName: 'map_01',
       player: player,
-      enemy: enemy,
     );
     // Tạo góc camera với:
     // world: gameMap

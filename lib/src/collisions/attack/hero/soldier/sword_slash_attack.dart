@@ -1,16 +1,16 @@
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 import 'package:shieldbound/shieldbound.dart';
-import 'package:shieldbound/src/damageable.dart';
-import 'package:shieldbound/src/player.dart';
+import 'package:shieldbound/src/utils/damageable.dart';
+import 'package:shieldbound/src/models/player.dart';
 
 class SwordSlashAttack extends PositionComponent
     with CollisionCallbacks, HasGameRef<Shieldbound> {
   final double damage;
   final double radius;
 
-  /// [position]: vị trí spawn của đòn tấn công.
-  /// [radius]: bán kính của hitbox hình tròn.
+  /// [position]: vị trí spawn của đòn tấn công .
+  /// [radius]: bán kính của hitbox hình tròn, mặc định là 13.
   SwordSlashAttack({
     required this.damage,
     required Vector2 position,
@@ -31,7 +31,6 @@ class SwordSlashAttack extends PositionComponent
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    // Chỉ Kiểm tra với những đối tượng khác người chơi
     if (other is Player) return;
     // Kiểm tra xem đối tượng va chạm có implement Damageable không
     print("SwordSlashAttack va chạm với: ${other.runtimeType}");

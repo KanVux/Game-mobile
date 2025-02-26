@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
-import 'package:shieldbound/src/player.dart';
+import 'package:shieldbound/src/models/enemy.dart';
 
-class Orc extends Player {
+class Orc extends Enemy {
   Orc({Vector2? position}) // Cho phép position là null
       : super(
           health: 300,
@@ -9,7 +9,7 @@ class Orc extends Player {
           moveSpeed: 80,
           position: position ??
               Vector2.zero(), // Mặc định là (0,0) nếu không truyền vào
-          character: 'Orc',
+          enemyName: 'Orc',
         );
 
   @override
@@ -18,10 +18,4 @@ class Orc extends Player {
     // Có thể thêm logic đặc biệt cho Orc ở đây
   }
 
-  void specialSkill() {
-    moveSpeed *= 1.5;
-    Future.delayed(Duration(seconds: 2), () {
-      moveSpeed /= 1.5;
-    });
-  }
 }
