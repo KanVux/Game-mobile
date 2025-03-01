@@ -8,7 +8,7 @@ class Soldier extends Player {
       : super(
           health: 150,
           damage: 20,
-          moveSpeed: 80,
+          moveSpeed: 100,
           position: position ??
               Vector2.zero(), // Mặc định là (0,0) nếu không truyền vào
           character: 'Soldier',

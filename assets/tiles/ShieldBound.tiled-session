@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "map_01.tmx",
+    "activeFile": "Home.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -20,24 +20,40 @@
                 "y": 184.26103646833016
             }
         },
+        "Foam.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 5.5
+        },
+        "Home.tmx": {
+            "expandedObjectLayers": [
+                13,
+                3
+            ],
+            "scale": 1,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": 663.5,
+                "y": 498
+            }
+        },
         "Rocks_01.tsx": {
             "scaleInDock": 1,
-            "scaleInEditor": 1
+            "scaleInEditor": 4
         },
         "Rocks_02.tsx": {
             "scaleInDock": 1,
-            "scaleInEditor": 1
+            "scaleInEditor": 4
         },
         "Rocks_03.tsx": {
             "scaleInDock": 1,
-            "scaleInEditor": 1
+            "scaleInEditor": 3
         },
         "Rocks_04.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "Shadows.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 2,
             "scaleInEditor": 1
         },
         "Tilemap_Elevation.tsx": {
@@ -45,39 +61,48 @@
             "scaleInEditor": 1
         },
         "Tilemap_Flat.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 0.75,
             "scaleInEditor": 1
+        },
+        "Tree.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.5,
+            "scaleInEditor": 2
         },
         "Water.tsx": {
             "scaleInDock": 1.5,
             "scaleInEditor": 1
         },
         "map_01.tmx": {
+            "expandedObjectLayers": [
+                6
+            ],
             "scale": 2,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": 244.25,
-                "y": 115.5
+                "x": 320,
+                "y": 183.75
             }
         },
         "map_spawn.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 1.5,
+            "scale": 4,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 330.66666666666663,
-                "y": 331.6666666666667
+                "x": 324,
+                "y": 239.375
             }
         }
     },
-    "last.imagePath": "D:/Games/kingdom_craft/assets/images/Terrain/Bridge",
-    "map.height": 23,
+    "frame.defaultDuration": 0,
+    "last.imagePath": "D:/Games/shieldbound/assets/images/Resources/Trees",
+    "map.height": 60,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
-    "map.width": 40,
+    "map.width": 90,
     "openFiles": [
         "map_spawn.tmx",
         "Water.tsx",
@@ -89,9 +114,12 @@
         "Tilemap_Flat.tsx",
         "Bridge_All.tsx",
         "Rocks_02.tsx",
-        "map_01.tmx"
+        "map_01.tmx",
+        "Home.tmx",
+        "Foam.tsx",
+        "Tree.tsx"
     ],
-    "project": "Kingdom Craft.tiled-project",
+    "project": "ShieldBound.tiled-project",
     "recentFiles": [
         "map_spawn.tmx",
         "Water.tsx",
@@ -104,9 +132,10 @@
         "Bridge_All.tsx",
         "Rocks_02.tsx",
         "map_01.tmx",
-        "D:/Games/kingdom_craft/assets/maps/map_spawn.tmx"
+        "Tree.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
+    "tileset.spacing": 1,
     "tileset.tileSize": {
         "height": 16,
         "width": 16

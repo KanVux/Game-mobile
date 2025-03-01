@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/services.dart';
 import 'package:shieldbound/src/ui/menu/image_button.dart';
 import '../../../shieldbound.dart'; // Import the new ImageButton
 
@@ -57,17 +60,14 @@ class MainMenu extends StatelessWidget {
                     Navigator.push(
                       context,
                       PageRouteBuilder(
-                        transitionDuration: Duration(seconds: 4),
+                        transitionDuration: Duration(seconds: 2),
                         pageBuilder: (context, animation, secondaryAnimation) {
-                          return Stack(
-                            children: [
-                              GameWidget(game: Shieldbound()),
-                              FadeTransition(
-                                opacity: Tween<double>(begin: 1, end: 0)
-                                    .animate(animation),
-                                child: Container(color: Colors.black),
-                              ),
-                            ],
+                          return FadeTransition(
+                            opacity: Tween<double>(begin: 0, end: 1)
+                                .animate(animation),
+                            child: GameWidget(
+                              game: Shieldbound(),
+                            ),
                           );
                         },
                       ),
@@ -97,7 +97,8 @@ class MainMenu extends StatelessWidget {
                       'assets/images/UI/Buttons/Button_Blue_3Slides_Pressed.png',
                   text: 'Exit',
                   onPressed: () {
-                    Navigator.pop(context);
+                    // Trên window thì sử dụng exit(0) TODO: sửa lại khi làm test trên android.
+                    exit(0);
                   },
                 ),
               ],

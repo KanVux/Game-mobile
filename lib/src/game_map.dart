@@ -9,6 +9,9 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'models/enermies_classes/orc.dart';
 
 class GameMap extends World with HasGameRef<Shieldbound> {
+  late final double mapWidth;
+  late final double mapHeight;
+
   final String mapName; // Tên của map
   final Player player; //  Khai báo một player cho một map
   final Vector2 gridSize = Vector2.all(16); // Grid size của map 16x16 ô
@@ -20,13 +23,23 @@ class GameMap extends World with HasGameRef<Shieldbound> {
 
     late TiledComponent map; // Khai báo map
     List<CollisionBlock> collisionBlocks = [];
-    map = await TiledComponent.load(
-      '$mapName.tmx',
-      gridSize,
-    ); // Load map có tên $mapName có kích thước gridSize vào map
+    try {
+      map = await TiledComponent.load(
+        '$mapName.tmx',
+        gridSize,
+      ); // Load map có tên $mapName có kích thước gridSize vào map
 
-    add(map); // Thêm map vào game
+      add(map);
+    } catch (e, stackTrace) {
+      print('Error loading Tiled map: $e');
+      print(stackTrace);
+    }
 
+    mapWidth = map.tileMap.map.width * map.tileMap.map.tileWidth.toDouble();
+    mapHeight = map.tileMap.map.height * map.tileMap.map.tileHeight.toDouble();
+
+    print(mapWidth);
+    print(mapHeight);
     // Thêm các lớp (Layers) cho một map
     // Lớp thứ I: Lớp cho điểm hồi sinh (Spawn point)
     final spawnPointLayer = map.tileMap.getLayer<ObjectGroup>(
@@ -74,6 +87,7 @@ class GameMap extends World with HasGameRef<Shieldbound> {
         }
       }
     }
+
     player.collisionBlocks = collisionBlocks;
     return super.onLoad();
   }

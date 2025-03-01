@@ -41,7 +41,6 @@ class Player extends SpriteAnimationGroupComponent
     super.position,
     required this.character,
   }) : super();
-
   // Định nghĩa các thông số mặc định của nhân vật
   final String character;
   double moveSpeed;
@@ -83,7 +82,7 @@ class Player extends SpriteAnimationGroupComponent
 
   // Hitbox đúng của nhân vật
   CustomHitbox playerHitbox = CustomHitbox(
-    offset: Vector2(20, 20),
+    offset: Vector2(18, 18),
     size: Vector2(10, 15),
   );
 
@@ -106,12 +105,14 @@ class Player extends SpriteAnimationGroupComponent
       },
       repeat: false,
     );
-
+    // Scale kích thước nhân vật
+    scale = Vector2.all(1.5);
     // Thêm hitbox vào player
     add(RectangleHitbox(
       position: playerHitbox.offset,
-      size: playerHitbox.size,
+      size: playerHitbox.size * scale.x,
     ));
+
     return super.onLoad();
   }
 
@@ -312,19 +313,25 @@ class Player extends SpriteAnimationGroupComponent
         // Resolve collision based on the side
         switch (collision.collisionSide) {
           case "top":
-            position.y = block.y - playerHitbox.size.y - playerHitbox.offset.y;
+            position.y = block.y -
+                (playerHitbox.size.y * scale.y) -
+                (playerHitbox.offset.y * scale.y);
             velocity.y = 0; // Stop downward movement
             break;
           case "bottom":
-            position.y = block.y + block.height - playerHitbox.offset.y;
+            position.y =
+                block.y + block.height - (playerHitbox.offset.y * scale.y);
             velocity.y = 0; // Stop upward movement
             break;
           case "left":
-            position.x = block.x - playerHitbox.size.x - playerHitbox.offset.x;
+            position.x = block.x -
+                (playerHitbox.size.x * scale.x) -
+                (playerHitbox.offset.x * scale.x);
             velocity.x = 0; // Stop leftward movement
             break;
           case "right":
-            position.x = block.x + block.width - playerHitbox.offset.x;
+            position.x =
+                block.x + block.width - (playerHitbox.offset.x * scale.x);
             velocity.x = 0; // Stop rightward movement
             break;
         }
