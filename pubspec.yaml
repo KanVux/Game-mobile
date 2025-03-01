@@ -84,6 +84,9 @@ flutter:
     - assets/images/UI/Background/menu_background.png
     - assets/images/UI/Buttons/Button_Blue_3Slides.png
     - assets/images/UI/Buttons/Button_Blue_3Slides_Pressed.png
+    - assets/images/UI/Buttons/Button_Red_3Slides.png
+    - assets/images/UI/Buttons/Button_Red_3Slides_Pressed.png
+    - assets/images/UI/Ribbons/Ribbon_Blue_3Slides.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
