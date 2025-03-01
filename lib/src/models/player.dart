@@ -9,6 +9,7 @@ import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/collision_block.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
+import 'package:shieldbound/src/models/components/tree_component.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 import 'package:shieldbound/src/collisions/utils.dart';
 
@@ -58,6 +59,8 @@ class Player extends SpriteAnimationGroupComponent
       PlayerFacing.right; // Cho hướng quay mặt mặc định là "phải"
   PlayerFacing lastFacingDirection =
       PlayerFacing.right; // Hướng quay ở lần quay cuối (Mặc định là "phải")
+
+  Vector2 previousPosition = Vector2.zero();
 
   // Flag trạng thái
   bool isDead = false;
@@ -118,6 +121,7 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   void update(double dt) {
+    previousPosition = position.clone();
     // Cập nhật game theo tick
     if (isAttackingAnimationPlaying) {
       attackTimer.update(dt);
@@ -380,6 +384,15 @@ class Player extends SpriteAnimationGroupComponent
 
   // Overide ở lớp con
   void attack() {}
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other is TreeComponent) {
+      position = previousPosition.clone();
+      print('colided with tree');
+    }
+    super.onCollision(intersectionPoints, other);
+  }
 }
 
 extension SpriteAnimationExtension on SpriteAnimation {
