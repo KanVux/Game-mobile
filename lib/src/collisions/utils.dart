@@ -14,10 +14,10 @@ CollisionInfo checkCollisionWithBlock(Player player, CollisionBlock block) {
   final hitbox = player.playerHitbox;
 
   // Player hitbox coordinates
-  final playerX = player.position.x + hitbox.offset.x;
-  final playerY = player.position.y + hitbox.offset.y;
-  final playerWidth = hitbox.size.x;
-  final playerHeight = hitbox.size.y;
+  final playerX = player.position.x + hitbox.offset.x * player.scale.x;
+  final playerY = player.position.y + hitbox.offset.y * player.scale.y;
+  final playerWidth = hitbox.size.x * player.scale.x;
+  final playerHeight = hitbox.size.y * player.scale.y;
 
   // Block coordinates
   final blockX = block.x;

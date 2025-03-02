@@ -62,8 +62,10 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
     current = EnemyState.idleRight;
     add(RectangleHitbox(
       position: enemyHitbox.offset,
-      size: enemyHitbox.size,
+      size: enemyHitbox.size * scale.x,
     ));
+    scale = Vector2.all(1.5);
+
     return super.onLoad();
   }
 
