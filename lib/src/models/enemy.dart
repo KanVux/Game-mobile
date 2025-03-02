@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
@@ -110,7 +111,7 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
 
   @override
   void takeDamage(double damageTaken) {
-    print("$enemyName nhận sát thương: $damageTaken");
+    debugPrint("$enemyName nhận sát thương: $damageTaken");
     health -= damageTaken;
 
     if (health <= 0) {

@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flame/components.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/collision_block.dart';
+import 'package:shieldbound/src/models/components/house_component.dart';
 import 'package:shieldbound/src/models/player.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 
@@ -38,14 +40,14 @@ class GameMap extends World with HasGameRef<Shieldbound> {
       map = await TiledComponent.load('$mapName.tmx', gridSize);
       backgroundLayer.add(map);
     } catch (e, stackTrace) {
-      print('Error loading Tiled map: $e');
-      print(stackTrace);
+      debugPrint('Error loading Tiled map: $e');
+      debugPrint('$stackTrace');
     }
 
     // 3. Tính kích thước map
     mapWidth = map.tileMap.map.width * map.tileMap.map.tileWidth.toDouble();
     mapHeight = map.tileMap.map.height * map.tileMap.map.tileHeight.toDouble();
-    print('Map width: $mapWidth, height: $mapHeight');
+    debugPrint('Map width: $mapWidth, height: $mapHeight');
 
     // 4. Lớp SpawnPoint: spawn Player và Enemy
     final spawnPointLayer = map.tileMap.getLayer<ObjectGroup>('SpawnPoint');
@@ -69,7 +71,7 @@ class GameMap extends World with HasGameRef<Shieldbound> {
               enemyInstance.anchor = Anchor.topLeft;
               dynamicLayer.add(enemyInstance);
             } else {
-              print('Không tìm thấy enemy với name: ${spawnPoint.name}');
+              debugPrint('Không tìm thấy enemy với name: ${spawnPoint.name}');
             }
             break;
         }
@@ -94,11 +96,17 @@ class GameMap extends World with HasGameRef<Shieldbound> {
         map.tileMap.getLayer<ObjectGroup>('Interactables');
     if (interactableLayer != null) {
       for (final obj in interactableLayer.objects) {
-        if (obj.class_ == 'Tree') {
-          final tree = TreeComponent(position: Vector2(obj.x, obj.y));
-          // Đối với cây, ta đặt anchor là bottomCenter để tính "gốc" của cây chính xác
-          tree.anchor = Anchor.bottomCenter;
-          dynamicLayer.add(tree);
+        switch (obj.class_) {
+          case 'Tree':
+            final tree = TreeComponent(position: Vector2(obj.x, obj.y));
+            // Đối với cây, ta đặt anchor là bottomCenter để tính "gốc" của cây chính xác
+            tree.anchor = Anchor.bottomCenter;
+            dynamicLayer.add(tree);
+            break;
+          case 'House':
+            final house = HouseComponent(position: Vector2(obj.x, obj.y));
+            dynamicLayer.add(house);
+            break;
         }
       }
     }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 import 'package:shieldbound/src/models/enemy.dart';
@@ -28,7 +29,7 @@ class EnemyMeleeAttack extends PositionComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is Enemy) return;
-    print("EnemyMeleeAttack va chạm với: ${other.runtimeType}");
+    debugPrint("EnemyMeleeAttack va chạm với: ${other.runtimeType}");
     if (other is Damageable) {
       (other as Damageable).takeDamage(damage);
       removeFromParent();

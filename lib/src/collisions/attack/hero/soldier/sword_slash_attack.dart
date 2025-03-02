@@ -1,6 +1,8 @@
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shieldbound/shieldbound.dart';
+import 'package:shieldbound/src/models/interactable.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 import 'package:shieldbound/src/models/player.dart';
 
@@ -32,8 +34,9 @@ class SwordSlashAttack extends PositionComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is Player) return;
+    if (other is Interactable) return;
     // Kiểm tra xem đối tượng va chạm có implement Damageable không
-    print("SwordSlashAttack va chạm với: ${other.runtimeType}");
+    debugPrint("SwordSlashAttack va chạm với: ${other.runtimeType}");
     if (other is Damageable) {
       (other as Damageable).takeDamage(damage);
       // Nếu muốn chỉ tác động một lần, có thể xóa hitbox sau va chạm
