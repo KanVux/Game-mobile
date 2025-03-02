@@ -75,7 +75,7 @@ class ProgressSegmentPainter extends CustomPainter {
 
     // Vẽ phần nền (màu đen)
     final blackPaint = Paint()
-      ..color = Colors.black
+      ..color = const Color.fromARGB(31, 209, 209, 209)
       ..style = PaintingStyle.fill;
     canvas.drawRect(rect, blackPaint);
 
@@ -92,7 +92,7 @@ class ProgressSegmentPainter extends CustomPainter {
       // Vẽ đường ngăn cách nếu segment được điền đầy một phần
       if (fillPercentage > 0 && fillPercentage < 100) {
         final dividePaint = Paint()
-          ..color = Colors.black
+          ..color = Colors.black12
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2;
         canvas.drawLine(
@@ -105,14 +105,14 @@ class ProgressSegmentPainter extends CustomPainter {
 
     // Vẽ viền đen
     final borderPaint = Paint()
-      ..color = Colors.black
+      ..color = Colors.black12
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     canvas.drawRect(rect, borderPaint);
 
     // Vẽ hiệu ứng bóng đổ ở dưới
     final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.3)
+      ..color = Colors.black12.withOpacity(0.3)
       ..style = PaintingStyle.fill;
     canvas.drawRect(
       Rect.fromLTWH(0, size.height - 2, size.width, 2),
