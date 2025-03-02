@@ -9,6 +9,7 @@ import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/collision_block.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
+import 'package:shieldbound/src/models/components/tree_component.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 import 'package:shieldbound/src/collisions/utils.dart';
 
@@ -41,7 +42,6 @@ class Player extends SpriteAnimationGroupComponent
     super.position,
     required this.character,
   }) : super();
-
   // Định nghĩa các thông số mặc định của nhân vật
   final String character;
   double moveSpeed;
@@ -59,6 +59,8 @@ class Player extends SpriteAnimationGroupComponent
       PlayerFacing.right; // Cho hướng quay mặt mặc định là "phải"
   PlayerFacing lastFacingDirection =
       PlayerFacing.right; // Hướng quay ở lần quay cuối (Mặc định là "phải")
+
+  Vector2 previousPosition = Vector2.zero();
 
   // Flag trạng thái
   bool isDead = false;
@@ -83,7 +85,7 @@ class Player extends SpriteAnimationGroupComponent
 
   // Hitbox đúng của nhân vật
   CustomHitbox playerHitbox = CustomHitbox(
-    offset: Vector2(20, 20),
+    offset: Vector2(18, 18),
     size: Vector2(10, 15),
   );
 
@@ -106,17 +108,20 @@ class Player extends SpriteAnimationGroupComponent
       },
       repeat: false,
     );
-
+    // Scale kích thước nhân vật
+    scale = Vector2.all(1.5);
     // Thêm hitbox vào player
     add(RectangleHitbox(
       position: playerHitbox.offset,
-      size: playerHitbox.size,
+      size: playerHitbox.size * scale.x,
     ));
+
     return super.onLoad();
   }
 
   @override
   void update(double dt) {
+    previousPosition = position.clone();
     // Cập nhật game theo tick
     if (isAttackingAnimationPlaying) {
       attackTimer.update(dt);
@@ -312,19 +317,25 @@ class Player extends SpriteAnimationGroupComponent
         // Resolve collision based on the side
         switch (collision.collisionSide) {
           case "top":
-            position.y = block.y - playerHitbox.size.y - playerHitbox.offset.y;
+            position.y = block.y -
+                (playerHitbox.size.y * scale.y) -
+                (playerHitbox.offset.y * scale.y);
             velocity.y = 0; // Stop downward movement
             break;
           case "bottom":
-            position.y = block.y + block.height - playerHitbox.offset.y;
+            position.y =
+                block.y + block.height - (playerHitbox.offset.y * scale.y);
             velocity.y = 0; // Stop upward movement
             break;
           case "left":
-            position.x = block.x - playerHitbox.size.x - playerHitbox.offset.x;
+            position.x = block.x -
+                (playerHitbox.size.x * scale.x) -
+                (playerHitbox.offset.x * scale.x);
             velocity.x = 0; // Stop leftward movement
             break;
           case "right":
-            position.x = block.x + block.width - playerHitbox.offset.x;
+            position.x =
+                block.x + block.width - (playerHitbox.offset.x * scale.x);
             velocity.x = 0; // Stop rightward movement
             break;
         }
@@ -373,6 +384,15 @@ class Player extends SpriteAnimationGroupComponent
 
   // Overide ở lớp con
   void attack() {}
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other is TreeComponent) {
+      position = previousPosition.clone();
+      print('colided with tree');
+    }
+    super.onCollision(intersectionPoints, other);
+  }
 }
 
 extension SpriteAnimationExtension on SpriteAnimation {
