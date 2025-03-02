@@ -7,17 +7,7 @@ abstract class Interactable extends SpriteComponent with TapCallbacks {
   /// Tạo đối tượng Interactable với vị trí, kích thước và điểm neo (anchor) mặc định.
   Interactable({
     required Vector2 position,
-    Vector2? size,
+    super.size,
     Anchor anchor = Anchor.center,
-  }) : super(position: position, size: size, anchor: anchor);
-
-  /// Phương thức này sẽ được gọi khi người dùng tương tác (như tap) vào đối tượng.
-  /// Các lớp con phải override phương thức này để định nghĩa hành vi tương tác cụ thể.
-  void onInteract();
-
-  @override
-  void onTapDown(TapDownEvent event) {
-    super.onTapDown(event);
-    onInteract();
-  }
+  }) : super(position: position, anchor: anchor);
 }

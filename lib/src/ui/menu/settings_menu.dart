@@ -36,6 +36,7 @@ class _SettingsMenuState extends State<SettingsMenu> {
     // prefs.setDouble('musicVolume', musicVolume);
     prefs.setDouble('musicVolume', musicVolume);
   }
+
   /// Toggle Mute
   void _toggleMute() {
     setState(() {
@@ -112,7 +113,7 @@ class _SettingsMenuState extends State<SettingsMenu> {
                 SizedBox(height: 10),
 
 // Container chứa cả thanh tiến trình và các nút điều chỉnh
-                Container(
+                SizedBox(
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: Row(
                     children: [
@@ -145,17 +146,15 @@ class _SettingsMenuState extends State<SettingsMenu> {
                       Container(
                         padding: EdgeInsets.all(1),
                         decoration: BoxDecoration(
-                          color: Colors
-                              .white54,
-                          borderRadius:
-                              BorderRadius.circular(12),
+                          color: Colors.white54,
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: ImageButton(
                           imagePath: 'assets/images/UI/Icons/Regular_08.png',
                           pressedImagePath:
                               'assets/images/UI/Icons/Pressed_08.png',
                           width: 60,
-                          onPressed:()=> _adjustVolume(0.1),
+                          onPressed: () => _adjustVolume(0.1),
                         ),
                       ),
                     ],

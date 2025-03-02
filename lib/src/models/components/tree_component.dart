@@ -5,9 +5,11 @@ import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
+import 'package:shieldbound/src/models/interactable.dart';
 
 class TreeComponent extends SpriteComponent
-    with TapCallbacks, CollisionCallbacks, HasGameRef<Shieldbound> {
+    with CollisionCallbacks, HasGameRef<Shieldbound>
+    implements Interactable {
   TreeComponent({required Vector2 position}) : super(position: position);
 
   @override
@@ -28,8 +30,22 @@ class TreeComponent extends SpriteComponent
 
   @override
   void onTapDown(TapDownEvent event) {
-    super.onTapDown(event);
     debugPrint('Tree at position $position tapped.');
-    // Bạn có thể thêm hành động tương tác (ví dụ: rung cây, thu hoạch,...) tại đây.
+    //Thêm hành động tương tác (ví dụ: rung cây, thu hoạch,...).
+  }
+
+  @override
+  void onLongTapDown(TapDownEvent event) {
+    // TODO: implement onLongTapDown
+  }
+
+  @override
+  void onTapCancel(TapCancelEvent event) {
+    // TODO: implement onTapCancel
+  }
+
+  @override
+  void onTapUp(TapUpEvent event) {
+    // TODO: implement onTapUp
   }
 }

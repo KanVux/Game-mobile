@@ -9,6 +9,7 @@ import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/collision_block.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
+import 'package:shieldbound/src/models/components/house_component.dart';
 import 'package:shieldbound/src/models/components/tree_component.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 import 'package:shieldbound/src/collisions/utils.dart';
@@ -85,8 +86,8 @@ class Player extends SpriteAnimationGroupComponent
 
   // Hitbox đúng của nhân vật
   CustomHitbox playerHitbox = CustomHitbox(
-    offset: Vector2(18, 18),
-    size: Vector2(10, 15),
+    offset: Vector2(18, 20),
+    size: Vector2(9, 10),
   );
 
   // Timer cho animation attack
@@ -387,9 +388,8 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is TreeComponent) {
+    if (other is TreeComponent || other is HouseComponent) {
       position = previousPosition.clone();
-      print('colided with tree');
     }
     super.onCollision(intersectionPoints, other);
   }

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/services.dart';
-import 'package:shieldbound/src/ui/menu/image_button.dart';
 import 'settings_menu.dart';
 import '../../../shieldbound.dart';
 import 'dart:math' as math;
@@ -146,7 +145,7 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
                             fit: BoxFit.contain,
                           ),
                           Positioned(
-                            top: 35 * titleScale,
+                            top: 30 * titleScale,
                             child: ShaderMask(
                               shaderCallback: (bounds) {
                                 return LinearGradient(
@@ -317,7 +316,7 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
             ),
           ).then((value) {
             if (value == true) {
-              Navigator.pop(context);
+              exit(0); // Chỉ có hiệu lực ở Windows sửa lại sau
             }
           });
         },
@@ -403,7 +402,7 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
     );
   }
 
- Widget _buildCreditsScreen() {
+  Widget _buildCreditsScreen() {
     return Container(
       decoration: BoxDecoration(
         color: Colors.black.withOpacity(0.8),
@@ -523,6 +522,7 @@ class EnhancedImageButton extends StatefulWidget {
   final double width;
 
   const EnhancedImageButton({
+    super.key,
     required this.imagePath,
     required this.pressedImagePath,
     required this.text,
@@ -609,7 +609,7 @@ class _EnhancedImageButtonState extends State<EnhancedImageButton>
                 width: widget.width,
                 height: height,
                 child: Stack(
-                  alignment: Alignment.center,
+                  alignment: Alignment(0, -0.5),
                   children: [
                     // Button background
                     Image.asset(
@@ -672,7 +672,7 @@ class _EnhancedImageButtonState extends State<EnhancedImageButton>
 
 // Parallax background effect
 class ParallaxBackground extends StatefulWidget {
-  const ParallaxBackground({Key? key}) : super(key: key);
+  const ParallaxBackground({super.key}) : super();
 
   @override
   _ParallaxBackgroundState createState() => _ParallaxBackgroundState();

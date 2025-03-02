@@ -68,7 +68,7 @@ flutter:
     - assets/images/Terrain/Ground/
     - assets/images/Terrain/Bridge/
     - assets/images/Resources/Trees/
-
+    - assets/images/Factions/Knights/Buildings/House/
     # Building assets
     - assets/tiles/
 
