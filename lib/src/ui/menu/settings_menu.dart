@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shieldbound/src/ui/menu/image_button.dart';
+import 'package:shieldbound/src/ui/menu/volume_bar.dart';
 import 'main_menu.dart'; // Import Main Menu for navigation
-
 
 class SettingsMenu extends StatefulWidget {
   @override
@@ -10,7 +10,8 @@ class SettingsMenu extends StatefulWidget {
 }
 
 class _SettingsMenuState extends State<SettingsMenu> {
-  bool isSoundOn = true;
+  // bool isSoundOn = true;
+  bool isMuted = false;
   double musicVolume = 0.5;
 
   @override
@@ -23,16 +24,34 @@ class _SettingsMenuState extends State<SettingsMenu> {
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      isSoundOn = prefs.getBool('soundOn') ?? true;
       musicVolume = prefs.getDouble('musicVolume') ?? 0.5;
+      isMuted = musicVolume == 0.0;
     });
   }
 
   /// Save settings to SharedPreferences
   Future<void> _saveSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('soundOn', isSoundOn);
+    // prefs.setBool('soundOn', isMuted);
+    // prefs.setDouble('musicVolume', musicVolume);
     prefs.setDouble('musicVolume', musicVolume);
+  }
+  /// Toggle Mute
+  void _toggleMute() {
+    setState(() {
+      isMuted = !isMuted;
+      musicVolume = isMuted ? 0.0 : 1.0; // 🔥 Mute = 0, Unmute = max
+      _saveSettings();
+    });
+  }
+
+  /// Adjust Volume
+  void _adjustVolume(double delta) {
+    setState(() {
+      musicVolume = (musicVolume + delta).clamp(0.0, 1.0);
+      isMuted = musicVolume == 0.0; // 🔥 Auto-mute if volume reaches 0
+      _saveSettings();
+    });
   }
 
   @override
@@ -64,29 +83,22 @@ class _SettingsMenuState extends State<SettingsMenu> {
                   ),
                 ),
                 SizedBox(height: 20),
-
-                // Sound Toggle
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Sound: ',
-                      style: TextStyle(
-                        fontFamily: 'MedievalSharp',
-                        fontSize: 22,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Switch(
-                      value: isSoundOn,
-                      onChanged: (value) {
-                        setState(() {
-                          isSoundOn = value;
-                          _saveSettings();
-                        });
-                      },
-                    ),
-                  ],
+                Container(
+                  padding: EdgeInsets.all(1),
+                  decoration: BoxDecoration(
+                    color: Colors.white54, // Background color
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ImageButton(
+                    imagePath: isMuted
+                        ? 'assets/images/UI/Icons/Disable_03.png' // Mute icon
+                        : 'assets/images/UI/Icons/Regular_03.png', // Sound on icon
+                    pressedImagePath: isMuted
+                        ? 'assets/images/UI/Icons/Disable_03.png' // Mute pressed
+                        : 'assets/images/UI/Icons/Regular_03.png', // Sound on pressed
+                    width: 60,
+                    onPressed: _toggleMute,
+                  ),
                 ),
                 SizedBox(height: 20),
                 Text(
@@ -97,18 +109,68 @@ class _SettingsMenuState extends State<SettingsMenu> {
                     color: Colors.white,
                   ),
                 ),
-                Slider(
-                  value: musicVolume,
-                  min: 0.0,
-                  max: 1.0,
-                  divisions: 10, // Adjust for smoothness
-                  onChanged: (value) {
-                    setState(() {
-                      musicVolume = value;
-                      _saveSettings();
-                    });
-                  },
+                SizedBox(height: 10),
+
+// Container chứa cả thanh tiến trình và các nút điều chỉnh
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: Row(
+                    children: [
+                      // tăng âm lượng
+                      Container(
+                        padding: EdgeInsets.all(1),
+                        decoration: BoxDecoration(
+                          color: Colors.white54,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ImageButton(
+                          imagePath: 'assets/images/UI/Icons/Regular_09.png',
+                          pressedImagePath:
+                              'assets/images/UI/Icons/Pressed_09.png',
+                          width: 60,
+                          onPressed: () => _adjustVolume(-0.1),
+                        ),
+                      ),
+                      // Thanh tiến trình
+                      Expanded(
+                        child: ProgressBar(
+                          value: musicVolume * 100,
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          height: 30,
+                          segments: 10,
+                        ),
+                      ),
+
+                      // Nút tăng âm lượng
+                      Container(
+                        padding: EdgeInsets.all(1),
+                        decoration: BoxDecoration(
+                          color: Colors
+                              .white54,
+                          borderRadius:
+                              BorderRadius.circular(12),
+                        ),
+                        child: ImageButton(
+                          imagePath: 'assets/images/UI/Icons/Regular_08.png',
+                          pressedImagePath:
+                              'assets/images/UI/Icons/Pressed_08.png',
+                          width: 60,
+                          onPressed:()=> _adjustVolume(0.1),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+
+                Text(
+                  '${(musicVolume * 100).round()}%',
+                  style: TextStyle(
+                    fontFamily: 'MedievalSharp',
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ),
+
                 SizedBox(height: 20),
                 ImageButton(
                   imagePath: 'assets/images/UI/Buttons/Button_Red_3Slides.png',
