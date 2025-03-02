@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/services.dart';
 import 'package:shieldbound/src/ui/menu/image_button.dart';
-import '../../../shieldbound.dart'; // Import the new ImageButton
+import 'settings_menu.dart';
+import '../../../shieldbound.dart';// Import the new ImageButton
 
 class MainMenu extends StatelessWidget {
   const MainMenu({super.key});
@@ -84,7 +85,12 @@ class MainMenu extends StatelessWidget {
                       'assets/images/UI/Buttons/Button_Blue_3Slides_Pressed.png',
                   text: 'Settings',
                   onPressed: () {
-                    // Settings functionality
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              SettingsMenu()), // Navigate to Settings
+                    );
                   },
                 ),
 

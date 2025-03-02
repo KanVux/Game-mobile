@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 class ImageButton extends StatefulWidget {
   final String imagePath;
   final String pressedImagePath;
-  final String text;
+  final String? text;
   final VoidCallback onPressed;
+  final double width; // 🔥 Make width configurable
 
   const ImageButton({
     required this.imagePath,
     required this.pressedImagePath,
-    required this.text,
+    this.text,
     required this.onPressed,
+    this.width = 200, // Default width if not provided
     super.key,
-  }) : super();
+  });
 
   @override
   _ImageButtonState createState() => _ImageButtonState();
@@ -36,29 +38,50 @@ class _ImageButtonState extends State<ImageButton> {
           // Button Image
           Image.asset(
             _isPressed ? widget.pressedImagePath : widget.imagePath,
-            width: 220, // Adjust width as needed
+            width: widget.width, // 🔥 Use configurable width
           ),
 
           // Button Text - Positioned slightly higher
-          Positioned(
-            top: 13, // Adjust this value to move text higher
-            child: Text(
-              widget.text,
-              style: TextStyle(
-                fontFamily: 'MedievalSharp', // Use the downloaded font
-                fontSize: 22, // Adjust size
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                shadows: [
-                  Shadow(
-                    blurRadius: 5,
-                    color: Colors.black.withValues(alpha: 0.7),
-                    offset: Offset(2, 2),
-                  ),
-                ],
+          // Positioned(
+          //   top: widget.width * 0.06, // 🔥 Adjust text position dynamically
+          //   child: Text(
+          //     widget.text,
+          //     style: TextStyle(
+          //       fontFamily: 'MedievalSharp',
+          //       fontSize: widget.width * 0.1, // 🔥 Scale font based on width
+          //       fontWeight: FontWeight.bold,
+          //       color: Colors.white,
+          //       shadows: [
+          //         Shadow(
+          //           blurRadius: 5,
+          //           color: Colors.black.withOpacity(0.7),
+          //           offset: Offset(2, 2),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+
+          if (widget.text != null)
+            Positioned(
+              top: widget.width * 0.06,
+              child: Text(
+                widget.text!,
+                style: TextStyle(
+                  fontFamily: 'MedievalSharp',
+                  fontSize: widget.width * 0.1,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 5,
+                      color: Colors.black.withOpacity(0.7),
+                      offset: Offset(2, 2),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

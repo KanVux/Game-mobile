@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flame: ^1.23.0
   flame_tiled: ^1.21.2
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
@@ -84,7 +85,16 @@ flutter:
     - assets/images/UI/Background/menu_background.png
     - assets/images/UI/Buttons/Button_Blue_3Slides.png
     - assets/images/UI/Buttons/Button_Blue_3Slides_Pressed.png
-    - assets/images/UI/Ribbons/
+    - assets/images/UI/Buttons/Button_Red_3Slides.png
+    - assets/images/UI/Buttons/Button_Red_3Slides_Pressed.png
+    - assets/images/UI/Ribbons/Ribbon_Blue_3Slides.png
+    - assets/images/UI/Settings/progress_bar.png
+    - assets/images/UI/Icons/Regular_03.png
+    - assets/images/UI/Icons/Disable_03.png
+    - assets/images/UI/Icons/Regular_08.png
+    - assets/images/UI/Icons/Pressed_08.png
+    - assets/images/UI/Icons/Regular_09.png
+    - assets/images/UI/Icons/Pressed_09.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
