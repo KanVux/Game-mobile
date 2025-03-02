@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shieldbound/src/ui/menu/image_button.dart';
-import 'package:shieldbound/src/ui/menu/volume_bar.dart';
+import 'package:shieldbound/src/ui/menu/progress_bar.dart';
 import 'main_menu.dart'; // Import Main Menu for navigation
 
 class SettingsMenu extends StatefulWidget {
