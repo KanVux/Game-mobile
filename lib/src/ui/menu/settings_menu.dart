@@ -348,6 +348,7 @@ class _SettingsMenuState extends State<SettingsMenu>
                               ],
                             );
                           },
+                        ),
                         SizedBox(height: screenSize.height * 0.04),
 
                         // Back Button (kích thước động)

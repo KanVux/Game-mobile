@@ -7,18 +7,27 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:shieldbound/src/models/hero_classes/soilder.dart';
 import 'package:shieldbound/src/ui/mobile/attack.dart';
+import 'package:shieldbound/src/ui/mobile/pause_button.dart';
 import 'package:shieldbound/src/game_map.dart';
 import 'package:shieldbound/src/models/player.dart';
 
 class Shieldbound extends FlameGame
-    with HasKeyboardHandlerComponents, DragCallbacks, HasCollisionDetection {
+    with
+        HasKeyboardHandlerComponents,
+        DragCallbacks,
+        HasCollisionDetection,
+        TapCallbacks {
   late final CameraComponent cam;
   final double windowWidth = 640;
   final double windowHeight = 360;
 
   Player player = Soldier();
   late JoystickComponent joystick;
-  bool isJoystickActive = false;
+  bool isJoystickActive = true;
+
+  // Pause state
+  bool isPaused = false;
+  Function? onGamePaused; // Callback when game is paused
 
   @override
   FutureOr<void> onLoad() async {
@@ -52,6 +61,10 @@ class Shieldbound extends FlameGame
       addJoystick();
       cam.viewport.add(Attack());
     }
+
+    // Add pause button
+    cam.viewport.add(PauseButton());
+
     cam.viewport.add(FpsTextComponent());
 
     Rectangle worldBound = Rectangle.fromLTRB(
@@ -65,6 +78,8 @@ class Shieldbound extends FlameGame
 
   @override
   void update(double dt) {
+    if (isPaused) return; // Skip updates when paused
+
     if (isJoystickActive) {
       updateJoystick();
     }
@@ -74,7 +89,7 @@ class Shieldbound extends FlameGame
   // Thêm joystick cho người chơi trên thiết bị di động
   void addJoystick() {
     joystick = JoystickComponent(
-      priority: 10,
+      priority: 200,
       knob: SpriteComponent(
         sprite: Sprite(
           images.fromCache('Hub/joystick_knob.png'),
@@ -98,5 +113,26 @@ class Shieldbound extends FlameGame
     } else {
       player.moveDirection = Vector2.zero();
     }
+  }
+
+  // Toggle game pause state
+  void togglePause() {
+    isPaused = !isPaused;
+
+    if (isPaused) {
+      // Pause the game and trigger the callback
+      if (onGamePaused != null) {
+        onGamePaused!();
+      }
+      // Stop player movement
+      player.moveDirection = Vector2.zero();
+    }
+
+    // You might add sound effects here
+  }
+
+  // Resume the game
+  void resumeGame() {
+    isPaused = false;
   }
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/services.dart';
+import '../game_wrapper.dart';
 import 'settings_menu.dart';
 import '../../../shieldbound.dart';
 import 'dart:math' as math;
@@ -213,7 +214,7 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
               pageBuilder: (context, animation, secondaryAnimation) {
                 return Stack(
                   children: [
-                    GameWidget(game: Shieldbound()),
+                    GameWrapper(),
                     FadeTransition(
                       opacity: Tween<double>(begin: 1, end: 0).animate(
                         CurvedAnimation(
