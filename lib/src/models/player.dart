@@ -13,6 +13,7 @@ import 'package:shieldbound/src/models/components/house_component.dart';
 import 'package:shieldbound/src/models/components/tree_component.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 import 'package:shieldbound/src/collisions/utils.dart';
+import 'package:shieldbound/src/services/audio_service.dart'; 
 
 enum PlayerState {
   idleLeft,
@@ -348,6 +349,8 @@ class Player extends SpriteAnimationGroupComponent
   void takeDamage(double damageTaken) {
     // Nếu người chơi đã chết, không xử lý thêm
     if (isDead) return;
+
+    AudioService().playSoundEffect('player_hurt', 'audio/sound_effects/hurt_sound.wav');
 
     // Trừ máu
     health -= damageTaken;

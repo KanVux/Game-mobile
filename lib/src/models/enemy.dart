@@ -8,6 +8,8 @@ import 'package:shieldbound/src/collisions/custom_hitbox.dart';
 import 'package:shieldbound/src/collisions/attack/enemy/enemy_melee_attack.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 
+import '../services/audio_service.dart';
+
 enum EnemyState {
   idleLeft,
   idleRight,
@@ -112,6 +114,9 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
   @override
   void takeDamage(double damageTaken) {
     debugPrint("$enemyName nhận sát thương: $damageTaken");
+
+    AudioService().playSoundEffect('enemy_hurt', 'audio/sound_effects/enemy_hurt_sound.wav');
+
     health -= damageTaken;
 
     if (health <= 0) {

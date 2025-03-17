@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 import 'package:shieldbound/src/models/enemy.dart';
+import 'package:shieldbound/src/services/audio_service.dart';
 
 class EnemyMeleeAttack extends PositionComponent
     with CollisionCallbacks, HasGameRef<Shieldbound> {
@@ -21,6 +22,11 @@ class EnemyMeleeAttack extends PositionComponent
   @override
   FutureOr<void> onLoad() async {
     await super.onLoad();
+
+    // Play enemy attack sound
+    AudioService()
+        .playSoundEffect('enemy_attack', 'audio/sound_effects/atk_sound.wav');
+
     add(
       CircleHitbox()..radius = radius,
     );
@@ -32,6 +38,10 @@ class EnemyMeleeAttack extends PositionComponent
     debugPrint("EnemyMeleeAttack va chạm với: ${other.runtimeType}");
     if (other is Damageable) {
       (other as Damageable).takeDamage(damage);
+
+      // Play hit sound
+      AudioService().playSoundEffect('enemy_hit', 'audio/sound_effects/atk_sound_hitted.wav');
+
       removeFromParent();
     }
     super.onCollision(intersectionPoints, other);

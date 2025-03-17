@@ -6,6 +6,7 @@ import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:shieldbound/src/models/hero_classes/soilder.dart';
+import 'package:shieldbound/src/models/hero_classes/wizard.dart';
 import 'package:shieldbound/src/ui/mobile/attack.dart';
 import 'package:shieldbound/src/ui/mobile/pause_button.dart';
 import 'package:shieldbound/src/game_map.dart';
@@ -25,6 +26,8 @@ class Shieldbound extends FlameGame
   final AudioService audioService = AudioService();
 
   Player player = Soldier();
+  // Player player = Wizard();
+  
   late JoystickComponent joystick;
   bool isJoystickActive = true;
 

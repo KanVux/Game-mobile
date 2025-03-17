@@ -101,6 +101,12 @@ flutter:
     - assets/audio/musics/2.mp3
 
     - assets/audio/sound_effects/atk_sound.wav
+    - assets/audio/sound_effects/atk_sound_hitted.wav
+    - assets/audio/sound_effects/fire_atk_sound.wav
+    - assets/audio/sound_effects/fire_atk_sound_hitted.wav
+    - assets/audio/sound_effects/fire_atk_sound_launch.wav
+    - assets/audio/sound_effects/hurt_sound.wav
+    - assets/audio/sound_effects/enemy_hurt_sound.wav
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
