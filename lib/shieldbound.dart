@@ -10,6 +10,7 @@ import 'package:shieldbound/src/ui/mobile/attack.dart';
 import 'package:shieldbound/src/ui/mobile/pause_button.dart';
 import 'package:shieldbound/src/game_map.dart';
 import 'package:shieldbound/src/models/player.dart';
+import 'package:shieldbound/src/services/audio_service.dart';
 
 class Shieldbound extends FlameGame
     with
@@ -17,9 +18,11 @@ class Shieldbound extends FlameGame
         DragCallbacks,
         HasCollisionDetection,
         TapCallbacks {
+  
   late final CameraComponent cam;
   final double windowWidth = 640;
   final double windowHeight = 360;
+  final AudioService audioService = AudioService();
 
   Player player = Soldier();
   late JoystickComponent joystick;
@@ -35,6 +38,10 @@ class Shieldbound extends FlameGame
     // TODO: Kiểm tra ở đây nếu bị giảm hiệu xuất
     // (nếu có dấu hiệu bị giảm performance thì chuyển lại chỉ load các image cần thiết)
     await images.loadAllImages();
+    await audioService.initialize();
+
+    // Play background music
+    audioService.playBackgroundMusic('audio/musics/2.mp3');
 
     // Tạo một map
     final gameMap = GameMap(
@@ -134,5 +141,10 @@ class Shieldbound extends FlameGame
   // Resume the game
   void resumeGame() {
     isPaused = false;
+  }
+  @override
+  void onRemove() {
+    audioService.stopBackgroundMusic();
+    super.onRemove();
   }
 }

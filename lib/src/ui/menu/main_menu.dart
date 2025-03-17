@@ -7,6 +7,7 @@ import '../game_wrapper.dart';
 import 'settings_menu.dart';
 import '../../../shieldbound.dart';
 import 'dart:math' as math;
+import 'package:shieldbound/src/services/audio_service.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -20,6 +21,7 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
   late final AnimationController _buttonAnimationController;
   late final Animation<double> _titleScaleAnimation;
   late final Animation<double> _titleGlowAnimation;
+  final AudioService _audioService = AudioService();
   bool _showCredits = false;
 
   @override
@@ -51,12 +53,17 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 800),
       vsync: this,
     )..forward();
+
+    _audioService.initialize().then((_) {
+      _audioService.playBackgroundMusic('audio/musics/2.mp3');
+    });
   }
 
   @override
   void dispose() {
     _titleAnimationController.dispose();
     _buttonAnimationController.dispose();
+    _audioService.stopBackgroundMusic();
     super.dispose();
   }
 
@@ -212,6 +219,7 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
             PageRouteBuilder(
               transitionDuration: const Duration(seconds: 2),
               pageBuilder: (context, animation, secondaryAnimation) {
+                _audioService.stopBackgroundMusic(); // stop music
                 return Stack(
                   children: [
                     GameWrapper(),
