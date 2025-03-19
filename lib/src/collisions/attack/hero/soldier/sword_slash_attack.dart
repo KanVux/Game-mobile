@@ -5,6 +5,7 @@ import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/models/interactable.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 import 'package:shieldbound/src/models/player.dart';
+import 'package:shieldbound/src/services/audio_service.dart'; 
 
 class SwordSlashAttack extends PositionComponent
     with CollisionCallbacks, HasGameRef<Shieldbound> {
@@ -24,7 +25,11 @@ class SwordSlashAttack extends PositionComponent
 
   @override
   Future<void> onLoad() async {
-    await super.onLoad();
+    await super.onLoad(); 
+    
+    // Play sword slash sound effect when created
+    AudioService().playSoundEffect('sword_slash', 'audio/sound_effects/atk_sound.wav');
+
     // Thêm CircleHitbox với bán kính đã định nghĩa.
     add(
       CircleHitbox()..radius = radius,
@@ -35,11 +40,14 @@ class SwordSlashAttack extends PositionComponent
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is Player) return;
     if (other is Interactable) return;
-    // Kiểm tra xem đối tượng va chạm có implement Damageable không
+
     debugPrint("SwordSlashAttack va chạm với: ${other.runtimeType}");
     if (other is Damageable) {
       (other as Damageable).takeDamage(damage);
-      // Nếu muốn chỉ tác động một lần, có thể xóa hitbox sau va chạm
+
+      // Play hit sound when successfully hitting something
+      AudioService().playSoundEffect('sword_hit', 'audio/sound_effects/atk_sound_hitted.wav');
+
       removeFromParent();
     }
     super.onCollision(intersectionPoints, other);
