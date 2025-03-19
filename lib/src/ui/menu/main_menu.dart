@@ -209,28 +209,17 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
       {
         'text': 'Start Game',
         'onPressed': () {
-          // Play sound effect
           HapticFeedback.mediumImpact();
+          _audioService.stopBackgroundMusic();
 
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             PageRouteBuilder(
-              transitionDuration: const Duration(seconds: 2),
+              transitionDuration: const Duration(milliseconds: 500),
               pageBuilder: (context, animation, secondaryAnimation) {
-                _audioService.stopBackgroundMusic(); // stop music
-                return Stack(
-                  children: [
-                    GameWrapper(),
-                    FadeTransition(
-                      opacity: Tween<double>(begin: 1, end: 0).animate(
-                        CurvedAnimation(
-                          parent: animation,
-                          curve: Curves.easeOut,
-                        ),
-                      ),
-                      child: Container(color: Colors.black),
-                    ),
-                  ],
+                return FadeTransition(
+                  opacity: animation,
+                  child: GameWrapper(),
                 );
               },
             ),

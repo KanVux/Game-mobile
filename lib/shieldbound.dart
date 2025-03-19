@@ -64,7 +64,7 @@ class Shieldbound extends FlameGame
     cam.viewfinder.anchor = Anchor.center;
     cam.follow(player);
     // Độ ưu tiên của cam
-    cam.priority = 0;
+    cam.priority = -1;
     await addAll([cam, gameMap]);
 
     if (isJoystickActive) {
