@@ -6,12 +6,10 @@ import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:shieldbound/src/models/hero_classes/soilder.dart';
-import 'package:shieldbound/src/models/hero_classes/wizard.dart';
 import 'package:shieldbound/src/ui/mobile/attack.dart';
 import 'package:shieldbound/src/ui/mobile/pause_button.dart';
 import 'package:shieldbound/src/game_map.dart';
 import 'package:shieldbound/src/models/player.dart';
-import 'package:shieldbound/src/services/audio_service.dart';
 
 class Shieldbound extends FlameGame
     with
@@ -23,7 +21,6 @@ class Shieldbound extends FlameGame
   late final CameraComponent cam;
   final double windowWidth = 640;
   final double windowHeight = 360;
-  final AudioService audioService = AudioService();
 
   Player player = Soldier();
   // Player player = Wizard();
@@ -35,16 +32,16 @@ class Shieldbound extends FlameGame
   bool isPaused = false;
   Function? onGamePaused; // Callback when game is paused
 
+  bool playSounds = true; 
+  double volume = 1.0;
   @override
   FutureOr<void> onLoad() async {
     // Load toàn bộ ảnh trong assets vào Cache
     // TODO: Kiểm tra ở đây nếu bị giảm hiệu xuất
     // (nếu có dấu hiệu bị giảm performance thì chuyển lại chỉ load các image cần thiết)
     await images.loadAllImages();
-    await audioService.initialize();
 
     // Play background music
-    audioService.playBackgroundMusic('audio/musics/2.mp3');
 
     // Tạo một map
     final gameMap = GameMap(
@@ -69,7 +66,7 @@ class Shieldbound extends FlameGame
 
     if (isJoystickActive) {
       addJoystick();
-      cam.viewport.add(Attack());
+      cam.viewport.add(Attack()..priority = 200);
     }
 
     // Add pause button
@@ -120,6 +117,11 @@ class Shieldbound extends FlameGame
     final direction = joystick.relativeDelta;
     if (direction != Vector2.zero()) {
       player.moveDirection = direction.normalized();
+      if (player.moveDirection.x < 0) {
+        player.lastFacingDirection = PlayerFacing.left;
+      } else {
+        player.lastFacingDirection = PlayerFacing.right;
+      }
     } else {
       player.moveDirection = Vector2.zero();
     }
@@ -145,9 +147,5 @@ class Shieldbound extends FlameGame
   void resumeGame() {
     isPaused = false;
   }
-  @override
-  void onRemove() {
-    audioService.stopBackgroundMusic();
-    super.onRemove();
-  }
+
 }

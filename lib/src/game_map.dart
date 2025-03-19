@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flame/components.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/collision_block.dart';
@@ -43,7 +44,9 @@ class GameMap extends World with HasGameRef<Shieldbound> {
       debugPrint('Error loading Tiled map: $e');
       debugPrint('$stackTrace');
     }
-
+    if(game.playSounds) {
+      FlameAudio.play('musics/2.mp3', volume: game.volume * 0.1);
+    }
     // 3. Tính kích thước map
     mapWidth = map.tileMap.map.width * map.tileMap.map.tileWidth.toDouble();
     mapHeight = map.tileMap.map.height * map.tileMap.map.tileHeight.toDouble();

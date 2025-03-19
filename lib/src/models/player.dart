@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame_audio/flame_audio.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
@@ -13,7 +15,6 @@ import 'package:shieldbound/src/models/components/house_component.dart';
 import 'package:shieldbound/src/models/components/tree_component.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 import 'package:shieldbound/src/collisions/utils.dart';
-import 'package:shieldbound/src/services/audio_service.dart'; 
 
 enum PlayerState {
   idleLeft,
@@ -94,6 +95,9 @@ class Player extends SpriteAnimationGroupComponent
   // Timer cho animation attack
   late Timer attackTimer;
 
+  // Thêm biến để track thời gian animation hurt
+  late Timer hurtTimer;
+
   @override
   FutureOr<void> onLoad() async {
     // Những method và function được thêm vào đây sẽ được chạy khi game load
@@ -118,18 +122,31 @@ class Player extends SpriteAnimationGroupComponent
       size: playerHitbox.size * scale.x,
     ));
 
+    // Khởi tạo hurt timer
+    hurtTimer = Timer(0.4, onTick: () {
+      isHurt = false;
+      if (!isDead) {
+        resetToIdleState();
+      }
+    });
+
     return super.onLoad();
   }
 
   @override
   void update(double dt) {
     previousPosition = position.clone();
-    // Cập nhật game theo tick
-    if (isAttackingAnimationPlaying) {
-      attackTimer.update(dt);
+
+    if (isHurt) {
+      hurtTimer.update(dt);
+    } else if (!isDead) {
+      if (isAttackingAnimationPlaying) {
+        attackTimer.update(dt);
+      }
+      _updatePlayerMovement(dt);
+      _updatePlayerState();
     }
-    _updatePlayerMovement(dt);
-    _updatePlayerState();
+
     _onCollision();
     super.update(dt);
   }
@@ -289,7 +306,8 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _updatePlayerState() {
-    if (isAttackingAnimationPlaying) return;
+    // Skip state updates if hurt or attacking
+    if (isAttackingAnimationPlaying || isHurt) return;
     if (velocity.x < 0 ||
         (velocity.x < 0 && velocity.y != 0) ||
         (lastFacingDirection == PlayerFacing.left && velocity.y != 0)) {
@@ -347,42 +365,46 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   void takeDamage(double damageTaken) {
-    // Nếu người chơi đã chết, không xử lý thêm
-    if (isDead) return;
+    if (health <= 0 || isHurt) return;
 
-    AudioService().playSoundEffect('player_hurt', 'audio/sound_effects/hurt_sound.wav');
+    debugPrint("$character nhận sát thương: $damageTaken");
 
-    // Trừ máu
+    if (game.playSounds) {
+      FlameAudio.play('sound_effects/enemy_hit_sound.wav', volume: game.volume);
+    }
+
     health -= damageTaken;
+    isHurt = true;
 
-    // Kiểm tra nếu máu hết
+    // Cancel any ongoing attack
+    isAttacking = false;
+    isAttackingAnimationPlaying = false;
+
+    // Force hurt animation
+    playerState = lastFacingDirection == PlayerFacing.left
+        ? PlayerState.hurtLeft
+        : PlayerState.hurtRight;
+    current = playerState;
+
+    // Stop movement
+    velocity = Vector2.zero();
+    moveDirection = Vector2.zero();
+
     if (health <= 0) {
-      health = 0;
       isDead = true;
-      // Chọn animation chết dựa trên hướng quay cuối cùng
       playerState = lastFacingDirection == PlayerFacing.left
           ? PlayerState.deathLeft
           : PlayerState.deathRight;
       current = playerState;
-      // Các logic khác cho trường hợp chết...
+
+      final deathAnim = animations![current]!;
+      Future.delayed(
+        Duration(milliseconds: (deathAnim.totalDuration() * 1000).toInt()),
+        () => removeFromParent(),
+      );
     } else {
-      // Nếu còn sống, chuyển sang trạng thái bị thương (hurt)
-      isHurt = true;
-      playerState = lastFacingDirection == PlayerFacing.left
-          ? PlayerState.hurtLeft
-          : PlayerState.hurtRight;
-      current = playerState;
-
-      // Lấy thời gian của animation hurt tương ứng
-      double hurtDuration = lastFacingDirection == PlayerFacing.left
-          ? hurtLeftAnimation.totalDuration()
-          : hurtRightAnimation.totalDuration();
-
-      // Sau khi animation hurt kết thúc, quay lại trạng thái idle
-      Future.delayed(Duration(milliseconds: (hurtDuration * 1000).toInt()), () {
-        isHurt = false;
-        resetToIdleState();
-      });
+      // Start hurt timer
+      hurtTimer.start();
     }
   }
 

@@ -1,13 +1,15 @@
 import 'dart:io';
 
+import 'package:flame/components.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shieldbound/shieldbound.dart';
 import '../game_wrapper.dart';
 import 'settings_menu.dart';
 import 'dart:math' as math;
-import 'package:shieldbound/src/services/audio_service.dart';
 
-class MainMenu extends StatefulWidget {
+class MainMenu extends StatefulWidget{
   const MainMenu({super.key});
 
   @override
@@ -19,13 +21,11 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
   late final AnimationController _buttonAnimationController;
   late final Animation<double> _titleScaleAnimation;
   late final Animation<double> _titleGlowAnimation;
-  final AudioService _audioService = AudioService();
   bool _showCredits = false;
 
   @override
   void initState() {
     super.initState();
-
     // Title animation setup
     _titleAnimationController = AnimationController(
       duration: const Duration(milliseconds: 1500),
@@ -52,16 +52,13 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
       vsync: this,
     )..forward();
 
-    _audioService.initialize().then((_) {
-      _audioService.playBackgroundMusic('audio/musics/2.mp3');
-    });
+    
   }
 
   @override
   void dispose() {
     _titleAnimationController.dispose();
     _buttonAnimationController.dispose();
-    _audioService.stopBackgroundMusic();
     super.dispose();
   }
 
@@ -209,8 +206,6 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
       {
         'text': 'Start Game',
         'onPressed': () {
-          HapticFeedback.mediumImpact();
-          _audioService.stopBackgroundMusic();
 
           Navigator.pushReplacement(
             context,

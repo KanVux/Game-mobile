@@ -1,11 +1,11 @@
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/models/interactable.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 import 'package:shieldbound/src/models/player.dart';
-import 'package:shieldbound/src/services/audio_service.dart'; 
 
 class SwordSlashAttack extends PositionComponent
     with CollisionCallbacks, HasGameRef<Shieldbound> {
@@ -25,11 +25,14 @@ class SwordSlashAttack extends PositionComponent
 
   @override
   Future<void> onLoad() async {
-    await super.onLoad(); 
-    
-    // Play sword slash sound effect when created
-    AudioService().playSoundEffect('sword_slash', 'audio/sound_effects/atk_sound.wav');
+    await super.onLoad();
 
+    if (game.playSounds) {
+      FlameAudio.play(
+        'sound_effects/sword_slash_attack.mp3',
+        volume: game.volume,
+      );
+    }
     // Thêm CircleHitbox với bán kính đã định nghĩa.
     add(
       CircleHitbox()..radius = radius,
@@ -46,7 +49,6 @@ class SwordSlashAttack extends PositionComponent
       (other as Damageable).takeDamage(damage);
 
       // Play hit sound when successfully hitting something
-      AudioService().playSoundEffect('sword_hit', 'audio/sound_effects/atk_sound_hitted.wav');
 
       removeFromParent();
     }

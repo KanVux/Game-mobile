@@ -3,7 +3,6 @@ import 'package:flame/components.dart';
 import 'package:shieldbound/main.dart';
 import 'package:shieldbound/src/collisions/attack/hero/wizard/fire_ball_attack.dart';
 import 'package:shieldbound/src/models/player.dart';
-import 'package:shieldbound/src/services/audio_service.dart'; // Add this import
 
 
 
@@ -29,7 +28,6 @@ class Wizard extends Player {
 
     isAttackingAnimationPlaying = true;
     // Play casting sound effect
-    AudioService().playSoundEffect('wizard_cast', 'audio/sound_effects/fire_atk_sound_launch.wav');
     playerState = lastFacingDirection == PlayerFacing.left
         ? PlayerState.attackLeft
         : PlayerState.attackRight;

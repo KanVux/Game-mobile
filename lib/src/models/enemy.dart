@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
 import 'package:shieldbound/src/collisions/attack/enemy/enemy_melee_attack.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
-
-import '../services/audio_service.dart';
 
 enum EnemyState {
   idleLeft,
@@ -56,6 +55,13 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
     size: Vector2(10, 15),
   );
 
+  // Thêm các thuộc tính cho AI
+  final double detectionRange = 200; // Phạm vi phát hiện player
+  final double attackRange = 30; // Phạm vi tấn công
+  bool isAttacking = false;
+  late Timer attackCooldown;
+  final double attackCooldownDuration = 2.0; // 2 giây giữa các đòn tấn công
+
   @override
   FutureOr<void> onLoad() async {
     debugMode = isDebugModeActived;
@@ -69,7 +75,15 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
     ));
     scale = Vector2.all(1.5);
 
-    return super.onLoad();
+    await super.onLoad();
+
+    // Khởi tạo timer cho cooldown tấn công
+    attackCooldown = Timer(
+      attackCooldownDuration,
+      onTick: () {
+        isAttacking = false;
+      },
+    );
   }
 
   Future<Map<EnemyState, SpriteAnimation>> _loadAnimations(
@@ -115,8 +129,9 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
   void takeDamage(double damageTaken) {
     debugPrint("$enemyName nhận sát thương: $damageTaken");
 
-    AudioService().playSoundEffect('enemy_hurt', 'audio/sound_effects/enemy_hurt_sound.wav');
-
+    if (game.playSounds) {
+      FlameAudio.play('sound_effects/enemy_hit_sound.wav', volume: game.volume);
+    }
     health -= damageTaken;
 
     if (health <= 0) {
@@ -172,37 +187,63 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
     }
   }
 
-  void spawnMeleeAttack() {
-    // Tính toán vị trí của đòn chém dựa theo hướng của nhân vật
-    Vector2 attackPosition;
-    if (lastFacingDirection == EnemyFacing.right) {
-      // Ví dụ: đặt hitbox ở bên phải của nhân vật
-      attackPosition = Vector2(
-          enemyHitbox.offset.x,
-          enemyHitbox.offset.y -
-              enemyHitbox.size.y / 2); // điều chỉnh theo yêu cầu
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (health <= 0) return; // Skip AI if dead
+
+    // Update attack cooldown
+    attackCooldown.update(dt);
+
+    // Tính khoảng cách đến player
+    final playerPosition = game.player.position;
+    final distance = position.distanceTo(playerPosition);
+
+    if (distance <= detectionRange) {
+      // Trong tầm phát hiện
+      if (distance <= attackRange) {
+        // Trong tầm đánh
+        if (!isAttacking && attackCooldown.finished) {
+          attack();
+        }
+      } else {
+        // Ngoài tầm đánh -> đuổi theo
+        _chasePlayer(playerPosition, dt);
+      }
     } else {
-      // Nếu hướng trái, đặt hitbox bên trái
-      attackPosition = Vector2(enemyHitbox.offset.x - (enemyHitbox.size.x + 6),
-          enemyHitbox.offset.y - enemyHitbox.size.y / 2);
+      // Ngoài tầm phát hiện -> đứng yên
+      _idle();
     }
-    // Lấy sát thương cho đòn chém từ thuộc tính damage của nhân vật (hoặc có thể là thuộc tính riêng của vũ khí)
-    double meleeDamage = damage; // có thể điều chỉnh sau này dễ dàng
-
-    // Tạo instance của SwordSlashAttack
-    EnemyMeleeAttack meleeSlash = EnemyMeleeAttack(
-      damage: meleeDamage,
-      position: attackPosition,
-    );
-
-    // Thêm SwordSlashAttack vào cây component của Player hoặc gameRef tùy theo cách tổ chức
-    add(meleeSlash);
-
-    // Nếu muốn, tự động xóa hitbox sau một khoảng thời gian ngắn (ví dụ: 200ms) nếu không có va chạm xảy ra
-    Future.delayed(Duration(milliseconds: 200), () {
-      meleeSlash.removeFromParent();
-    });
   }
+
+  void _chasePlayer(Vector2 playerPosition, double dt) {
+    // Tính vector hướng đến player
+    final direction = (playerPosition - position).normalized();
+
+    // Cập nhật velocity và position
+    velocity = direction * moveSpeed;
+    position += velocity * dt;
+
+    // Cập nhật hướng nhìn và animation
+    if (velocity.x < 0) {
+      lastFacingDirection = EnemyFacing.left;
+      current = EnemyState.walkLeft;
+    } else {
+      lastFacingDirection = EnemyFacing.right;
+      current = EnemyState.walkRight;
+    }
+  }
+
+  void attack() {}
+
+  void _idle() {
+    velocity = Vector2.zero();
+    current = lastFacingDirection == EnemyFacing.left
+        ? EnemyState.idleLeft
+        : EnemyState.idleRight;
+  }
+
+  
 }
 
 /// Extension giúp tính tổng thời gian của một animation

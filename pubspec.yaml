@@ -38,6 +38,7 @@ dependencies:
   flame_tiled: ^1.21.2
   shared_preferences: ^2.2.2
   audioplayers: ^6.0.0
+  flame_audio: ^2.11.1
 
 dev_dependencies:
   flutter_test:
@@ -100,13 +101,7 @@ flutter:
     # Audio assets
     - assets/audio/musics/2.mp3
 
-    - assets/audio/sound_effects/atk_sound.wav
-    - assets/audio/sound_effects/atk_sound_hitted.wav
-    - assets/audio/sound_effects/fire_atk_sound.wav
-    - assets/audio/sound_effects/fire_atk_sound_hitted.wav
-    - assets/audio/sound_effects/fire_atk_sound_launch.wav
-    - assets/audio/sound_effects/hurt_sound.wav
-    - assets/audio/sound_effects/enemy_hurt_sound.wav
+    - assets/audio/sound_effects/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

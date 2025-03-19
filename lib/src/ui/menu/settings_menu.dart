@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shieldbound/src/ui/menu/image_button.dart';
 import 'package:shieldbound/src/ui/menu/progress_bar.dart';
 import 'main_menu.dart';
-import 'package:shieldbound/src/services/audio_service.dart';
 
 class SettingsMenu extends StatefulWidget {
   @override
@@ -15,7 +14,7 @@ class _SettingsMenuState extends State<SettingsMenu>
   double musicVolume = 0.5;
   late AnimationController _animationController;
   late Animation<double> _animation;
-  final AudioService _audioService = AudioService();
+  // final AudioService _audioService = AudioService();
 
   @override
   void initState() {
@@ -44,10 +43,10 @@ class _SettingsMenuState extends State<SettingsMenu>
 
   /// Load settings from SharedPreferences
   Future<void> _loadSettings() async {
-    setState(() {
-      musicVolume = _audioService.volume;
-      isMuted = _audioService.isMuted;
-    });
+    // setState(() {
+    //   musicVolume = _audioService.volume;
+    //   isMuted = _audioService.isMuted;
+    // });
   }
 
   /// Save settings to SharedPreferences
@@ -58,21 +57,21 @@ class _SettingsMenuState extends State<SettingsMenu>
 
   /// Toggle Mute
   void _toggleMute() {
-    _audioService.toggleMute();
-    setState(() {
-      isMuted = _audioService.isMuted;
-      musicVolume = _audioService.volume;
-    });
+    // _audioService.toggleMute();
+    // setState(() {
+    //   isMuted = _audioService.isMuted;
+    //   musicVolume = _audioService.volume;
+    // });
   }
 
   /// Adjust Volume
   void _adjustVolume(double delta) {
     final newVolume = (musicVolume + delta).clamp(0.0, 1.0);
-    _audioService.setVolume(newVolume);
-    setState(() {
-      musicVolume = newVolume;
-      isMuted = newVolume == 0.0;
-    });
+    // _audioService.setVolume(newVolume);
+    // setState(() {
+    //   musicVolume = newVolume;
+    //   isMuted = newVolume == 0.0;
+    // });
   }
 
   @override

@@ -4,7 +4,6 @@ import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/models/player.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
-import 'package:shieldbound/src/services/audio_service.dart';
 
 class FireballAttack extends SpriteAnimationComponent
     with HasGameRef<Shieldbound>, CollisionCallbacks {
@@ -31,7 +30,6 @@ class FireballAttack extends SpriteAnimationComponent
     debugMode = isDebugModeActived;
 
     // Play fireball launch sound
-    AudioService().playSoundEffect('fireball_launch', 'audio/sound_effects/fire_atk_sound_launch.wav');
 
     // Load animation từ file ảnh
     animation = await gameRef.loadSpriteAnimation(
@@ -52,13 +50,14 @@ class FireballAttack extends SpriteAnimationComponent
     add(hitbox!);
 
     // Sau amount * steptime (khoảng frame thứ 6), mở rộng hitbox thành vụ nổ
-    Future.delayed(Duration(milliseconds: 1200), () {
-      if (!isRemoved) {
-        hitbox?.radius = radius * 1.4;
-        AudioService().playSoundEffect(
-            'fireball_explode', 'audio/sound_effects/fire_atk_sound.wav'); // ADD FIRE BALL SFX LATER
-      }
-    });
+    Future.delayed(
+      Duration(milliseconds: 1200),
+      () {
+        if (!isRemoved) {
+          hitbox?.radius = radius * 1.4;
+        }
+      },
+    );
 
     // Xóa sau khi animation kết thúc amount * steptime
     Future.delayed(Duration(milliseconds: 1400), () {
@@ -81,10 +80,6 @@ class FireballAttack extends SpriteAnimationComponent
     if (other is Player) return;
     if (other is Damageable) {
       (other as Damageable).takeDamage(damage);
-
-      // Play hit sound
-      AudioService()
-          .playSoundEffect('fireball_hit', 'audio/sound_effects/fire_atk_sound_hitted.wav');
 
       removeFromParent();
     }
