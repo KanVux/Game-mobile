@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame/experimental.dart';
 import 'package:flutter/material.dart';
 import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';

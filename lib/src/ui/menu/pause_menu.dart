@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shieldbound/src/ui/menu/image_button.dart';
-import 'package:shieldbound/src/ui/menu/main_menu.dart';
 
 class PauseMenu extends StatelessWidget {
   final VoidCallback onResumePressed;
