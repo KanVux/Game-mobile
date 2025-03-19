@@ -54,7 +54,7 @@ class _ImageButtonState extends State<ImageButton> {
           //       shadows: [
           //         Shadow(
           //           blurRadius: 5,
-          //           color: Colors.black.withOpacity(0.7),
+          //           color: Colors.black.withValues(alpha:  0.7),
           //           offset: Offset(2, 2),
           //         ),
           //       ],
@@ -75,7 +75,7 @@ class _ImageButtonState extends State<ImageButton> {
                   shadows: [
                     Shadow(
                       blurRadius: 5,
-                      color: Colors.black.withOpacity(0.7),
+                      color: Colors.black.withValues(alpha:  0.7),
                       offset: Offset(2, 2),
                     ),
                   ],

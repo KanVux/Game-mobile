@@ -26,7 +26,7 @@ class ProgressBar extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         // Thêm đường viền đỏ như trong hình ảnh (tùy chọn)
-        border: Border.all(color: Colors.red.withOpacity(0), width: 1),
+        border: Border.all(color: Colors.red.withValues(alpha: 0), width: 1),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -112,7 +112,7 @@ class ProgressSegmentPainter extends CustomPainter {
 
     // Vẽ hiệu ứng bóng đổ ở dưới
     final shadowPaint = Paint()
-      ..color = Colors.black12.withOpacity(0.3)
+      ..color = Colors.black12.withValues(alpha: 0.3)
       ..style = PaintingStyle.fill;
     canvas.drawRect(
       Rect.fromLTWH(0, size.height - 2, size.width, 2),

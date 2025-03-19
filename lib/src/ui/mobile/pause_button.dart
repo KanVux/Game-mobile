@@ -23,7 +23,7 @@ class PauseButton extends PositionComponent
     // Create a simple pause icon using RectangleComponent
     add(RectangleComponent(
       size: Vector2(40, 40),
-      paint: Paint()..color = Colors.blue.withOpacity(0.7),
+      paint: Paint()..color = Colors.blue.withValues(alpha: 0.8),
       position: Vector2.zero(),
     ));
 
@@ -40,7 +40,7 @@ class PauseButton extends PositionComponent
       position: Vector2(22, 8),
     ));
 
-    priority = 200;
+    priority = 10;
 
     return super.onLoad();
   }
@@ -52,7 +52,7 @@ class PauseButton extends PositionComponent
     // Visual feedback
     for (final child in children) {
       if (child is RectangleComponent) {
-        child.paint.color = child.paint.color.withOpacity(0.5);
+        child.paint.color = child.paint.color.withValues(alpha: 0.8);
       }
     }
 
@@ -66,7 +66,7 @@ class PauseButton extends PositionComponent
     // Reset visual state
     for (final child in children) {
       if (child is RectangleComponent) {
-        child.paint.color = child.paint.color.withOpacity(1.0);
+        child.paint.color = child.paint.color.withValues(alpha: 0.8);
       }
     }
 
@@ -81,7 +81,7 @@ class PauseButton extends PositionComponent
     // Reset visual state
     for (final child in children) {
       if (child is RectangleComponent) {
-        child.paint.color = child.paint.color.withOpacity(1.0);
+        child.paint.color = child.paint.color.withValues(alpha: 0.8);
       }
     }
 

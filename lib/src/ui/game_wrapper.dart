@@ -70,10 +70,7 @@ class _GameWrapperState extends State<GameWrapper> {
     return Scaffold(
       body: Stack(
         children: [
-          // Game
           GameWidget(game: game),
-
-          // Pause Menu Overlay
           if (showPauseMenu)
             PauseMenu(
               onResumePressed: resumeGame,

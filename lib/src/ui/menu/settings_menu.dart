@@ -93,8 +93,8 @@ class _SettingsMenuState extends State<SettingsMenu>
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.7),
-                  Colors.black.withOpacity(0.9)
+                  Colors.black.withValues(alpha: 0.7),
+                  Colors.black.withValues(alpha: 0.9)
                 ],
               ).createShader(rect),
               blendMode: BlendMode.darken,
@@ -114,10 +114,10 @@ class _SettingsMenuState extends State<SettingsMenu>
               height: screenSize.width * 0.3,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.amber.withOpacity(0.2),
+                color: Colors.amber.withValues(alpha: 0.2),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.amber.withOpacity(0.2),
+                    color: Colors.amber.withValues(alpha: 0.2),
                     blurRadius: screenSize.width * 0.2,
                     spreadRadius: screenSize.width * 0.1,
                   ),
@@ -135,7 +135,7 @@ class _SettingsMenuState extends State<SettingsMenu>
             child: Container(
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Colors.amber.withOpacity(0.3),
+                  color: Colors.amber.withValues(alpha: 0.3),
                   width: 1 + screenSize.width * 0.002,
                 ),
                 borderRadius: BorderRadius.circular(screenSize.width * 0.04),
@@ -163,16 +163,16 @@ class _SettingsMenuState extends State<SettingsMenu>
                     horizontal: screenSize.width * 0.04,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6),
+                    color: Colors.black.withValues(alpha: 0.6),
                     borderRadius:
                         BorderRadius.circular(screenSize.width * 0.05),
                     border: Border.all(
-                      color: Colors.amber.withOpacity(0.5),
+                      color: Colors.amber.withValues(alpha: 0.5),
                       width: 1 + screenSize.width * 0.002,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.amber.withOpacity(0.1),
+                        color: Colors.amber.withValues(alpha: 0.1),
                         blurRadius: screenSize.width * 0.05,
                         spreadRadius: screenSize.width * 0.02,
                       ),
@@ -187,7 +187,7 @@ class _SettingsMenuState extends State<SettingsMenu>
                         Container(
                           padding: EdgeInsets.all(screenSize.width * 0.02),
                           decoration: BoxDecoration(
-                            color: Colors.amber.withOpacity(0.2),
+                            color: Colors.amber.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -211,7 +211,7 @@ class _SettingsMenuState extends State<SettingsMenu>
                                 foreground: Paint()
                                   ..style = PaintingStyle.stroke
                                   ..strokeWidth = 6
-                                  ..color = Colors.black.withOpacity(0.7),
+                                  ..color = Colors.black.withValues(alpha: 0.7),
                               ),
                             ),
                             Text(
@@ -223,7 +223,7 @@ class _SettingsMenuState extends State<SettingsMenu>
                                 color: Colors.amber,
                                 shadows: [
                                   Shadow(
-                                    color: Colors.amber.withOpacity(0.5),
+                                    color: Colors.amber.withValues(alpha: 0.5),
                                     offset: Offset(0, 0),
                                     blurRadius: screenSize.width * 0.03,
                                   ),
@@ -242,8 +242,8 @@ class _SettingsMenuState extends State<SettingsMenu>
                             padding: EdgeInsets.all(screenSize.width * 0.005),
                             decoration: BoxDecoration(
                               color: isMuted
-                                  ? Colors.red.withOpacity(0.3)
-                                  : Colors.green.withOpacity(0.3),
+                                  ? Colors.red.withValues(alpha: 0.3)
+                                  : Colors.green.withValues(alpha: 0.3),
                               borderRadius: BorderRadius.circular(
                                   screenSize.width * 0.01),
                             ),
@@ -271,11 +271,11 @@ class _SettingsMenuState extends State<SettingsMenu>
                               padding: EdgeInsets.symmetric(
                                   horizontal: screenSize.width * 0.03),
                               decoration: BoxDecoration(
-                                color: Colors.amber.withOpacity(0.2),
+                                color: Colors.amber.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(
                                     screenSize.width * 0.02),
                                 border: Border.all(
-                                  color: Colors.amber.withOpacity(0.5),
+                                  color: Colors.amber.withValues(alpha: 0.5),
                                   width: 1,
                                 ),
                               ),
@@ -301,7 +301,7 @@ class _SettingsMenuState extends State<SettingsMenu>
                                   padding:
                                       EdgeInsets.all(screenSize.width * 0.0005),
                                   decoration: BoxDecoration(
-                                    color: Colors.amber.withOpacity(0.2),
+                                    color: Colors.amber.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(
                                         screenSize.width * 0.01),
                                   ),
@@ -333,7 +333,7 @@ class _SettingsMenuState extends State<SettingsMenu>
                                   padding:
                                       EdgeInsets.all(screenSize.width * 0.0005),
                                   decoration: BoxDecoration(
-                                    color: Colors.amber.withOpacity(0.2),
+                                    color: Colors.amber.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(
                                         screenSize.width * 0.01),
                                   ),
@@ -357,7 +357,7 @@ class _SettingsMenuState extends State<SettingsMenu>
                           decoration: BoxDecoration(
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.red.withOpacity(0.3),
+                                color: Colors.red.withValues(alpha: 0.3),
                                 blurRadius: screenSize.width * 0.003,
                                 spreadRadius: screenSize.width * 0.001,
                               ),
@@ -417,10 +417,10 @@ class _SettingsMenuState extends State<SettingsMenu>
         horizontal: screenSize.width * 0.03,
       ),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.4),
+        color: Colors.black.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(screenSize.width * 0.04),
         border: Border.all(
-          color: Colors.amber.withOpacity(0.3),
+          color: Colors.amber.withValues(alpha: 0.3),
           width: 1,
         ),
       ),

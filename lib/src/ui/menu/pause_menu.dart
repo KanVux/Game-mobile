@@ -21,11 +21,12 @@ class PauseMenu extends StatelessWidget {
         screenSize.width * 0.4 > 200 ? 200 : screenSize.width * 0.4;
 
     return Container(
+      // Sửa withValues -> withOpacity
       color: Colors.black.withOpacity(0.7),
       child: Center(
         child: Container(
           width: screenSize.width * 0.7,
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Colors.blue.shade900.withOpacity(0.8),
             borderRadius: BorderRadius.circular(20),
@@ -54,15 +55,13 @@ class PauseMenu extends StatelessWidget {
                   shadows: [
                     Shadow(
                       color: Colors.black,
-                      offset: Offset(2, 2),
+                      offset: const Offset(2, 2),
                       blurRadius: 4,
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 40),
-
-              // Resume Button
+              const SizedBox(height: 40),
               Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: ImageButton(
@@ -77,8 +76,6 @@ class PauseMenu extends StatelessWidget {
                   },
                 ),
               ),
-
-              // Settings Button
               Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: ImageButton(
@@ -93,8 +90,6 @@ class PauseMenu extends StatelessWidget {
                   },
                 ),
               ),
-
-              // Main Menu Button
               ImageButton(
                 imagePath: 'assets/images/UI/Buttons/Button_Red_3Slides.png',
                 pressedImagePath:

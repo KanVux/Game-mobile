@@ -9,7 +9,7 @@ import 'package:shieldbound/src/models/interactable.dart';
 
 class TreeComponent extends SpriteComponent
     with CollisionCallbacks, HasGameRef<Shieldbound>
-    implements Interactable {
+ {
   TreeComponent({required Vector2 position}) : super(position: position);
 
   @override
@@ -28,24 +28,4 @@ class TreeComponent extends SpriteComponent
     return super.onLoad();
   }
 
-  @override
-  void onTapDown(TapDownEvent event) {
-    debugPrint('Tree at position $position tapped.');
-    //Thêm hành động tương tác (ví dụ: rung cây, thu hoạch,...).
-  }
-
-  @override
-  void onLongTapDown(TapDownEvent event) {
-    // TODO: implement onLongTapDown
-  }
-
-  @override
-  void onTapCancel(TapCancelEvent event) {
-    // TODO: implement onTapCancel
-  }
-
-  @override
-  void onTapUp(TapUpEvent event) {
-    // TODO: implement onTapUp
-  }
 }
