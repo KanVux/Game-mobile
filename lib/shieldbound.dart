@@ -4,8 +4,8 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
+import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shieldbound/src/models/hero_classes/soilder.dart';
 import 'package:shieldbound/src/providers/provider.dart';
 import 'package:shieldbound/src/services/audio_service.dart';
@@ -19,11 +19,11 @@ class Shieldbound extends FlameGame
         HasKeyboardHandlerComponents,
         DragCallbacks,
         HasCollisionDetection,
-        TapCallbacks {
+        TapCallbacks,
+        RiverpodGameMixin {
   late final CameraComponent cam;
   final double windowWidth = 640;
   final double windowHeight = 360;
-
   Player player = Soldier();
   // Player player = Wizard();
 
@@ -37,60 +37,69 @@ class Shieldbound extends FlameGame
   bool playSounds = true;
 
   @override
-  FutureOr<void> onLoad() async {
-    await images.loadAllImages();
-    // Sử dụng Riverpod để lấy AudioService
-    final container = ProviderContainer();
-    final audioService = container.read(audioServiceProvider);
-    await audioService.initialize();
-    // Mỗi lần game khởi chạy, phát lại nhạc nền mới
-    await audioService.playBackgroundMusic('musics/2.mp3');
+  Future<void> onLoad() async {
+    await super.onLoad();
 
-    // Load toàn bộ ảnh trong assets vào Cache
-    // TODO: Kiểm tra ở đây nếu bị giảm hiệu xuất
-    // (nếu có dấu hiệu bị giảm performance thì chuyển lại chỉ load các image cần thiết)
-    await images.loadAllImages();
+    try {
+      // Khởi tạo player trước
+      player = Soldier();
 
-    // Play background music
+      // Cập nhật provider với player instance
+      ref.read(playerProvider.notifier).state = player;
 
-    // Tạo một map
-    final gameMap = GameMap(
-      mapName: 'Home',
-      player: player,
-    );
-    // Tạo góc camera với:
-    // world: gameMap
-    // width: chiều rộng cửa sổ game
-    // height: chiều cao cửa sổ game
-    cam = CameraComponent.withFixedResolution(
-      world: gameMap,
-      width: windowWidth,
-      height: windowHeight,
-    );
+      // Cập nhật health provider với giá trị máu ban đầu
+      ref.read(playerHealthProvider.notifier).state = player.health.toInt();
 
-    cam.viewfinder.anchor = Anchor.center;
-    cam.follow(player);
-    // Độ ưu tiên của cam
-    cam.priority = -1;
-    await addAll([cam, gameMap]);
+      // Load images first
+      await images.loadAllImages();
 
-    if (isJoystickActive) {
-      addJoystick();
-      cam.viewport.add(Attack()..priority = 200);
+      // Sử dụng ref từ RiverpodGameMixin
+      final audioService = ref.read(audioServiceProvider);
+      await audioService.initialize();
+      await audioService.playBackgroundMusic('musics/2.mp3');
+      debugPrint('Error initializing audio service');
+
+      // Tạo một map
+      final gameMap = GameMap(
+        mapName: 'Home',
+        player: player,
+      );
+      // Tạo góc camera với:
+      // world: gameMap
+      // width: chiều rộng cửa sổ game
+      // height: chiều cao cửa sổ game
+      cam = CameraComponent.withFixedResolution(
+        world: gameMap,
+        width: windowWidth,
+        height: windowHeight,
+      );
+
+      cam.viewfinder.anchor = Anchor.center;
+      cam.follow(player);
+      // Độ ưu tiên của cam
+      cam.priority = -1;
+      await addAll([cam, gameMap]);
+
+      if (isJoystickActive) {
+        addJoystick();
+        cam.viewport.add(Attack()..priority = 200);
+      }
+
+      // Add pause button
+      cam.viewport.add(PauseButton());
+
+      cam.viewport.add(FpsTextComponent());
+
+      Rectangle worldBound = Rectangle.fromLTRB(
+          windowWidth / 2,
+          windowHeight / 2,
+          gameMap.mapWidth - windowWidth / 2,
+          gameMap.mapHeight - windowHeight / 2);
+      cam.setBounds(worldBound as Shape?);
+      return super.onLoad();
+    } catch (e) {
+      debugPrint('Error in onLoad: $e');
     }
-
-    // Add pause button
-    cam.viewport.add(PauseButton());
-
-    cam.viewport.add(FpsTextComponent());
-
-    Rectangle worldBound = Rectangle.fromLTRB(
-        windowWidth / 2,
-        windowHeight / 2,
-        gameMap.mapWidth - windowWidth / 2,
-        gameMap.mapHeight - windowHeight / 2);
-    cam.setBounds(worldBound as Shape?);
-    return super.onLoad();
   }
 
   @override

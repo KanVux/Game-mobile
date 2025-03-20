@@ -1,20 +1,16 @@
 import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
-import 'package:flame/events.dart';
-import 'package:flutter/material.dart';
 import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
-import 'package:shieldbound/src/models/interactable.dart';
 
 class TreeComponent extends SpriteComponent
-    with CollisionCallbacks, HasGameRef<Shieldbound>
- {
+    with CollisionCallbacks, HasGameRef<Shieldbound> {
   TreeComponent({required Vector2 position}) : super(position: position);
 
   @override
   FutureOr<void> onLoad() async {
-    debugMode = isDebugModeActived;
+    debugMode = isDebugModeActivated;
     // Load sprite của cây (đảm bảo file sprite được khai báo trong pubspec.yaml)
     sprite = await Sprite.load('Resources/Trees/Tree.png');
     // Kích thước của cây, bạn điều chỉnh cho phù hợp
@@ -27,5 +23,4 @@ class TreeComponent extends SpriteComponent
 
     return super.onLoad();
   }
-
 }

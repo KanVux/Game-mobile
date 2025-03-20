@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="90" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="15" nextobjectid="209">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="90" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="15" nextobjectid="210">
  <tileset firstgid="1" source="Tilemap_Flat.tsx"/>
  <tileset firstgid="641" source="Water.tsx"/>
  <tileset firstgid="650" source="Tilemap_Elevation.tsx"/>
@@ -589,6 +589,7 @@
  <objectgroup id="3" name="SpawnPoint">
   <object id="1" name="Player" type="Player" x="624" y="368" width="32" height="32"/>
   <object id="184" name="Orc" type="Enemy" x="576" y="256" width="32" height="32"/>
+  <object id="209" name="Orc" type="Enemy" x="816" y="320" width="32" height="32"/>
  </objectgroup>
  <objectgroup id="13" name="Interactables">
   <object id="190" name="Tree" type="Tree" x="304" y="160" width="16" height="16">

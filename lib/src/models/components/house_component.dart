@@ -13,7 +13,7 @@ class HouseComponent extends SpriteComponent {
 
   @override
   FutureOr<void> onLoad() async {
-    debugMode = isDebugModeActived;
+    debugMode = isDebugModeActivated;
     sprite =
         await Sprite.load('Factions/Knights/Buildings/House/House_Blue.png');
     size = Vector2(100, 150);
@@ -22,7 +22,7 @@ class HouseComponent extends SpriteComponent {
       position: Vector2(18, size.y / 2),
       size: Vector2(65, 55),
     )
-      ..debugMode = isDebugModeActived
+      ..debugMode = isDebugModeActivated
       ..debugColor = Colors.yellow);
     return super.onLoad();
   }

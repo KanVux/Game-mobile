@@ -4,12 +4,11 @@ import 'package:shieldbound/main.dart';
 import 'package:shieldbound/src/collisions/attack/hero/wizard/fire_ball_attack.dart';
 import 'package:shieldbound/src/models/player.dart';
 
-
-
 class Wizard extends Player {
   Wizard({Vector2? position})
       : super(
           health: 100,
+          maxHealth: 100,
           moveSpeed: 80,
           damage: 30,
           position: position ?? Vector2.zero(),
@@ -18,7 +17,7 @@ class Wizard extends Player {
 
   @override
   FutureOr<void> onLoad() {
-    debugMode = isDebugModeActived;
+    debugMode = isDebugModeActivated;
     return super.onLoad();
   }
 

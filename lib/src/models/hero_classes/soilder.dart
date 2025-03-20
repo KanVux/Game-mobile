@@ -4,19 +4,19 @@ import 'package:shieldbound/src/collisions/attack/hero/soldier/sword_slash_attac
 import 'package:shieldbound/src/models/player.dart';
 
 class Soldier extends Player {
-  Soldier({Vector2? position}) // Cho phép position là null
+  Soldier({Vector2? position})
       : super(
           health: 150,
+          maxHealth: 150,
           damage: 20,
           moveSpeed: 100,
-          position: position ??
-              Vector2.zero(), // Mặc định là (0,0) nếu không truyền vào
+          position: position ?? Vector2.zero(),
           character: 'Soldier',
         );
 
   @override
   Future<void> onLoad() async {
-    debugMode = isDebugModeActived;
+    debugMode = isDebugModeActivated;
     await super.onLoad();
     // Có thể thêm logic đặc biệt cho Soldier ở đây
   }
@@ -28,12 +28,10 @@ class Soldier extends Player {
     isAttacking = true;
     isAttackingAnimationPlaying = true;
 
-    // Play sword draw/swing sound when starting the attack animation
-
+    // Thay đổi hướng tấn công dựa theo hướng di chuyển của nhân vật
     playerState = lastFacingDirection == PlayerFacing.left
         ? PlayerState.attackLeft
         : PlayerState.attackRight;
-
     current = playerState;
 
     Future.delayed(Duration(milliseconds: 300), () {

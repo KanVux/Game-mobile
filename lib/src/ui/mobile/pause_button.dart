@@ -14,7 +14,7 @@ class PauseButton extends PositionComponent
 
   @override
   FutureOr<void> onLoad() async {
-    debugMode = isDebugModeActived;
+    debugMode = isDebugModeActivated;
 
     // Set size and position
     size = Vector2(40, 40);

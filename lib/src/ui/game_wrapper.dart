@@ -1,31 +1,51 @@
 import 'package:flame/game.dart';
+import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/ui/menu/main_menu.dart';
 import 'package:shieldbound/src/ui/menu/pause_menu.dart';
 import 'package:shieldbound/src/ui/menu/settings_menu.dart';
+import 'package:shieldbound/src/ui/game_over_screen.dart';
+import 'hud_overlay.dart';
 
-class GameWrapper extends StatefulWidget {
+// Create providers
+final gameProvider = StateProvider<Shieldbound?>((ref) => null);
+
+class GameWrapper extends ConsumerStatefulWidget {
   const GameWrapper({Key? key}) : super(key: key);
 
   @override
-  State<GameWrapper> createState() => _GameWrapperState();
+  ConsumerState<GameWrapper> createState() => _GameWrapperState();
 }
 
-class _GameWrapperState extends State<GameWrapper> {
+class _GameWrapperState extends ConsumerState<GameWrapper> {
   late Shieldbound game;
   bool showPauseMenu = false;
 
   @override
   void initState() {
     super.initState();
+
     game = Shieldbound();
 
-    // Set up the pause callback
-    game.onGamePaused = () {
-      setState(() {
-        showPauseMenu = true;
+    // Đặt trong try-catch để dễ debug
+    try {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ref.read(gameProvider.notifier).state = game;
+        }
       });
+    } catch (e) {
+      debugPrint('Error initializing game: $e');
+    }
+
+    game.onGamePaused = () {
+      if (mounted) {
+        setState(() {
+          showPauseMenu = true;
+        });
+      }
     };
   }
 
@@ -68,15 +88,25 @@ class _GameWrapperState extends State<GameWrapper> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Bỏ ProviderScope ở đây
       body: Stack(
         children: [
-          GameWidget(game: game),
+          RiverpodAwareGameWidget<Shieldbound>(
+            key: GlobalKey(),
+            game: game,
+            overlayBuilderMap: {
+              'GameOverScreen': (context, Shieldbound game) =>
+                  const GameOverScreen(),
+            },
+            initialActiveOverlays: const [],
+          ),
           if (showPauseMenu)
             PauseMenu(
               onResumePressed: resumeGame,
               onSettingsPressed: openSettings,
               onMainMenuPressed: returnToMainMenu,
             ),
+          const HudOverlay(),
         ],
       ),
     );

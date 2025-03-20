@@ -29,11 +29,11 @@
                 13,
                 3
             ],
-            "scale": 1.5,
-            "selectedLayer": 9,
+            "scale": 0.75,
+            "selectedLayer": 10,
             "viewCenter": {
-                "x": 606.3333333333334,
-                "y": 364.66666666666663
+                "x": 809.3333333333333,
+                "y": 797.9999999999999
             }
         },
         "Rocks_01.tsx": {
@@ -72,6 +72,14 @@
         "Water.tsx": {
             "scaleInDock": 1.5,
             "scaleInEditor": 1
+        },
+        "level1.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 435.99999999999994,
+                "y": 363.33333333333326
+            }
         },
         "map_01.tmx": {
             "expandedObjectLayers": [

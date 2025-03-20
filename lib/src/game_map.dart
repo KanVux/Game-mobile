@@ -9,7 +9,6 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shieldbound/src/providers/enemy_provider.dart';
 import 'package:shieldbound/src/models/enermies_classes/orc.dart';
-
 import 'models/components/tree_component.dart';
 
 class GameMap extends World with HasGameRef<Shieldbound> {

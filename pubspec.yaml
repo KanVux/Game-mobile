@@ -84,6 +84,8 @@ flutter:
 
     # Hub assets
     - assets/images/Hub/
+    - assets/images/UI/Banners/
+
 
     # Menu assets
     - assets/images/UI/Background/menu_background.png

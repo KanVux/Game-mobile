@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shieldbound/src/models/player.dart';
-// final playerHealthProvider = StateProvider<int>((ref) => 100);
-// final playerMaxHealthProvider = StateProvider<int>((ref) => 100);
-// final playerDamageProvider = StateProvider<int>((ref) => 20);
-// final playerGoldProvider = StateProvider<int>((ref) => 0);
+import 'package:shieldbound/src/providers/provider.dart';
+
+// final playerHealthProvider = StateProvider<int>((ref) => 150);
+final playerMaxHealthProvider = StateProvider<int>((ref) => 100);
+final playerDamageProvider = StateProvider<int>((ref) => 20);
+final playerGoldProvider = StateProvider<int>((ref) => 0);
+
 class HudOverlay extends ConsumerWidget {
   const HudOverlay({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Lấy trạng thái từ provider
-    final health = 100; //ref.watch(playerHealthProvider);
-    final gold = 0; //ref.watch(playerGoldProvider);
-    final damage = 20;//ref.watch(playerDamageProvider);
+    final health = ref.watch(playerHealthProvider);
+    final gold =  ref.watch(playerGoldProvider);
+    final damage = ref.watch(playerDamageProvider);
     
     return Positioned(
       left: 28,

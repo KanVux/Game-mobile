@@ -13,7 +13,9 @@ import 'package:shieldbound/src/collisions/collision_block.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
 import 'package:shieldbound/src/models/components/house_component.dart';
 import 'package:shieldbound/src/models/components/tree_component.dart';
+import 'package:shieldbound/src/providers/provider.dart';
 import 'package:shieldbound/src/services/audio_service.dart';
+import 'package:shieldbound/src/ui/hud_overlay.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 import 'package:shieldbound/src/collisions/utils.dart';
 
@@ -32,7 +34,7 @@ enum PlayerState {
 
 enum PlayerFacing { left, right }
 
-class Player extends SpriteAnimationGroupComponent
+abstract class Player extends SpriteAnimationGroupComponent
     with
         HasGameRef<Shieldbound>,
         KeyboardHandler,
@@ -41,15 +43,19 @@ class Player extends SpriteAnimationGroupComponent
     implements Damageable {
   Player({
     required this.health,
+    required this.maxHealth,
     required this.damage,
     required this.moveSpeed,
-    super.position,
+    required Vector2 position,
     required this.character,
-  }) : super();
+  }) : super() {
+    this.position = position;
+  }
   // Định nghĩa các thông số mặc định của nhân vật
   final String character;
   double moveSpeed;
   double health;
+  double maxHealth;
   double damage;
 
   // XỬ LÝ DI CHUYỂN VÀ TRẠNG THÁI
@@ -102,7 +108,7 @@ class Player extends SpriteAnimationGroupComponent
   @override
   FutureOr<void> onLoad() async {
     // Những method và function được thêm vào đây sẽ được chạy khi game load
-    debugMode = isDebugModeActived;
+    debugMode = isDebugModeActivated;
     // Load Animation
     await _loadAllAnimation();
     // Bắt đầu timer cho attack
@@ -130,6 +136,10 @@ class Player extends SpriteAnimationGroupComponent
         resetToIdleState();
       }
     });
+
+    // Thêm listener để cập nhật provider khi health thay đổi
+
+   
 
     return super.onLoad();
   }
@@ -371,12 +381,15 @@ class Player extends SpriteAnimationGroupComponent
     debugPrint("$character nhận sát thương: $damageTaken");
 
     if (game.playSounds) {
-      FlameAudio.play('sound_effects/enemy_hit_sound.wav', volume: AudioService().volume);
+      FlameAudio.play('sound_effects/enemy_hit_sound.wav',
+          volume: AudioService().volume);
     }
 
+    game.ref.read(playerHealthProvider.notifier).state = health.toInt();
     health -= damageTaken;
+    if (health < 0) health = 0;
     isHurt = true;
-
+  
     // Cancel any ongoing attack
     isAttacking = false;
     isAttackingAnimationPlaying = false;
@@ -401,10 +414,12 @@ class Player extends SpriteAnimationGroupComponent
       final deathAnim = animations![current]!;
       Future.delayed(
         Duration(milliseconds: (deathAnim.totalDuration() * 1000).toInt()),
-        () => removeFromParent(),
+        () {
+          removeFromParent();
+          gameRef.overlays.add('GameOverScreen');
+        },
       );
     } else {
-      // Start hurt timer
       hurtTimer.start();
     }
   }
