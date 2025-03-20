@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shieldbound/src/models/player.dart';
 import 'package:shieldbound/src/providers/provider.dart';
 
 // final playerHealthProvider = StateProvider<int>((ref) => 150);
