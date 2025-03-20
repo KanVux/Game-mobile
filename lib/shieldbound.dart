@@ -5,7 +5,10 @@ import 'package:flame/events.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shieldbound/src/models/hero_classes/soilder.dart';
+import 'package:shieldbound/src/providers/provider.dart';
+import 'package:shieldbound/src/services/audio_service.dart';
 import 'package:shieldbound/src/ui/mobile/attack.dart';
 import 'package:shieldbound/src/ui/mobile/pause_button.dart';
 import 'package:shieldbound/src/game_map.dart';
@@ -17,14 +20,13 @@ class Shieldbound extends FlameGame
         DragCallbacks,
         HasCollisionDetection,
         TapCallbacks {
-  
   late final CameraComponent cam;
   final double windowWidth = 640;
   final double windowHeight = 360;
 
   Player player = Soldier();
   // Player player = Wizard();
-  
+
   late JoystickComponent joystick;
   bool isJoystickActive = true;
 
@@ -32,10 +34,18 @@ class Shieldbound extends FlameGame
   bool isPaused = false;
   Function? onGamePaused; // Callback when game is paused
 
-  bool playSounds = true; 
-  double volume = 1.0;
+  bool playSounds = true;
+
   @override
   FutureOr<void> onLoad() async {
+    await images.loadAllImages();
+    // Sử dụng Riverpod để lấy AudioService
+    final container = ProviderContainer();
+    final audioService = container.read(audioServiceProvider);
+    await audioService.initialize();
+    // Mỗi lần game khởi chạy, phát lại nhạc nền mới
+    await audioService.playBackgroundMusic('musics/2.mp3');
+
     // Load toàn bộ ảnh trong assets vào Cache
     // TODO: Kiểm tra ở đây nếu bị giảm hiệu xuất
     // (nếu có dấu hiệu bị giảm performance thì chuyển lại chỉ load các image cần thiết)
@@ -132,7 +142,7 @@ class Shieldbound extends FlameGame
     isPaused = !isPaused;
 
     if (isPaused) {
-      // Pause the game and trigger the callback
+      AudioService().stopBackgroundMusic();
       if (onGamePaused != null) {
         onGamePaused!();
       }
@@ -147,5 +157,4 @@ class Shieldbound extends FlameGame
   void resumeGame() {
     isPaused = false;
   }
-
 }

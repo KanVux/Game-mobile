@@ -13,6 +13,7 @@ import 'package:shieldbound/src/collisions/collision_block.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
 import 'package:shieldbound/src/models/components/house_component.dart';
 import 'package:shieldbound/src/models/components/tree_component.dart';
+import 'package:shieldbound/src/services/audio_service.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 import 'package:shieldbound/src/collisions/utils.dart';
 
@@ -370,7 +371,7 @@ class Player extends SpriteAnimationGroupComponent
     debugPrint("$character nhận sát thương: $damageTaken");
 
     if (game.playSounds) {
-      FlameAudio.play('sound_effects/enemy_hit_sound.wav', volume: game.volume);
+      FlameAudio.play('sound_effects/enemy_hit_sound.wav', volume: AudioService().volume);
     }
 
     health -= damageTaken;

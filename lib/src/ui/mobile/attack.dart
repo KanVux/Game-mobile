@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flutter/services.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
-import 'package:shieldbound/src/models/player.dart';
 
 class Attack extends SpriteComponent
     with HasGameRef<Shieldbound>, TapCallbacks {

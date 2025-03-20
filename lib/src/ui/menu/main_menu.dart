@@ -1,10 +1,7 @@
 import 'dart:io';
 
-import 'package:flame/components.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shieldbound/shieldbound.dart';
 import '../game_wrapper.dart';
 import 'settings_menu.dart';
 import 'dart:math' as math;

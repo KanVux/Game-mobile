@@ -45,7 +45,7 @@ class GameMap extends World with HasGameRef<Shieldbound> {
       debugPrint('$stackTrace');
     }
     if(game.playSounds) {
-      FlameAudio.play('musics/2.mp3', volume: game.volume * 0.1);
+      // FlameAudio.play('musics/2.mp3', volume: game.volume * 0.1);
     }
     // 3. Tính kích thước map
     mapWidth = map.tileMap.map.width * map.tileMap.map.tileWidth.toDouble();

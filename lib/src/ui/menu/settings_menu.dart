@@ -1,38 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shieldbound/src/providers/provider.dart';
 import 'package:shieldbound/src/ui/menu/image_button.dart';
 import 'package:shieldbound/src/ui/menu/progress_bar.dart';
 import 'main_menu.dart';
 
-class SettingsMenu extends StatefulWidget {
+class SettingsMenu extends ConsumerStatefulWidget {
+  const SettingsMenu({super.key});
+
   @override
-  _SettingsMenuState createState() => _SettingsMenuState();
+  ConsumerState<SettingsMenu> createState() => _SettingsMenuState();
 }
 
-class _SettingsMenuState extends State<SettingsMenu>
+class _SettingsMenuState extends ConsumerState<SettingsMenu>
     with SingleTickerProviderStateMixin {
   bool isMuted = false;
   double musicVolume = 0.5;
   late AnimationController _animationController;
   late Animation<double> _animation;
-  // final AudioService _audioService = AudioService();
 
   @override
   void initState() {
     super.initState();
-    _loadSettings();
-
-    // Thêm animation cho các phần tử
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-
     _animation = CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOutBack,
     );
-
     _animationController.forward();
+    _loadSettings();
   }
 
   @override
@@ -41,37 +40,54 @@ class _SettingsMenuState extends State<SettingsMenu>
     super.dispose();
   }
 
-  /// Load settings from SharedPreferences
   Future<void> _loadSettings() async {
-    // setState(() {
-    //   musicVolume = _audioService.volume;
-    //   isMuted = _audioService.isMuted;
-    // });
+    final audioService = ref.read(audioServiceProvider);
+    setState(() {
+      musicVolume = audioService.volume;
+      isMuted = audioService.isMuted;
+    });
   }
 
-  /// Save settings to SharedPreferences
-  // Future<void> _saveSettings() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   prefs.setDouble('musicVolume', musicVolume);
-  // }
-
-  /// Toggle Mute
+  /// Toggle mute sử dụng FlameAudio qua AudioService
   void _toggleMute() {
-    // _audioService.toggleMute();
-    // setState(() {
-    //   isMuted = _audioService.isMuted;
-    //   musicVolume = _audioService.volume;
-    // });
+    final audioService = ref.read(audioServiceProvider);
+    audioService.toggleMute().then((_) {
+      setState(() {
+        isMuted = audioService.isMuted;
+        musicVolume = audioService.volume;
+      });
+    });
   }
 
-  /// Adjust Volume
+  /// Adjust volume và cập nhật AudioService ngay lập tức
   void _adjustVolume(double delta) {
+    final audioService = ref.read(audioServiceProvider);
     final newVolume = (musicVolume + delta).clamp(0.0, 1.0);
-    // _audioService.setVolume(newVolume);
-    // setState(() {
-    //   musicVolume = newVolume;
-    //   isMuted = newVolume == 0.0;
-    // });
+    audioService.setVolume(newVolume).then((_) {
+      setState(() {
+        musicVolume = newVolume;
+        isMuted = newVolume == 0.0;
+      });
+    });
+  }
+
+  /// Khi nhấn nút Back, chuyển về MainMenu thay vì quay lại game
+  void _onBackPressed(BuildContext context) {
+    _animationController.reverse().then((_) {
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => MainMenu(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+          transitionDuration: Duration(milliseconds: 500),
+        ),
+      );
+    });
   }
 
   @override
@@ -85,7 +101,7 @@ class _SettingsMenuState extends State<SettingsMenu>
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image với hiệu ứng gradient overlay (giữ nguyên)
+          // Background Image với gradient overlay
           Positioned.fill(
             child: ShaderMask(
               shaderCallback: (rect) => LinearGradient(
@@ -93,7 +109,7 @@ class _SettingsMenuState extends State<SettingsMenu>
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.black.withOpacity(0.7),
-                  Colors.black.withOpacity(0.9)
+                  Colors.black.withOpacity(0.9),
                 ],
               ).createShader(rect),
               blendMode: BlendMode.darken,
@@ -103,8 +119,7 @@ class _SettingsMenuState extends State<SettingsMenu>
               ),
             ),
           ),
-
-          // Hiệu ứng ánh sáng (điều chỉnh kích thước động)
+          // Hiệu ứng ánh sáng
           Positioned(
             top: -screenSize.height * 0.15,
             left: screenSize.width / 2 - screenSize.width * 0.15,
@@ -124,8 +139,7 @@ class _SettingsMenuState extends State<SettingsMenu>
               ),
             ),
           ),
-
-          // Đường viền trang trí (sử dụng tỷ lệ %)
+          // Đường viền trang trí
           Positioned(
             top: screenSize.height * 0.02,
             left: screenSize.width * 0.03,
@@ -141,8 +155,7 @@ class _SettingsMenuState extends State<SettingsMenu>
               ),
             ),
           ),
-
-          // Settings UI (phần chính)
+          // Settings UI
           Center(
             child: FadeTransition(
               opacity: _animation,
@@ -154,7 +167,7 @@ class _SettingsMenuState extends State<SettingsMenu>
                 child: Container(
                   width: screenSize.width * 0.85,
                   constraints: BoxConstraints(
-                    maxWidth: 600, // Giới hạn kích thước tối đa
+                    maxWidth: 600,
                     maxHeight: screenSize.height * 0.9,
                   ),
                   padding: EdgeInsets.symmetric(
@@ -178,11 +191,10 @@ class _SettingsMenuState extends State<SettingsMenu>
                     ],
                   ),
                   child: SingleChildScrollView(
-                    // Thêm scroll nếu nội dung dài
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Biểu tượng Settings (kích thước động)
+                        // Biểu tượng Settings
                         Container(
                           padding: EdgeInsets.all(screenSize.width * 0.02),
                           decoration: BoxDecoration(
@@ -196,8 +208,7 @@ class _SettingsMenuState extends State<SettingsMenu>
                           ),
                         ),
                         SizedBox(height: screenSize.height * 0.02),
-
-                        // Title (kích thước chữ động)
+                        // Title
                         Stack(
                           alignment: Alignment.center,
                           children: [
@@ -232,8 +243,7 @@ class _SettingsMenuState extends State<SettingsMenu>
                           ],
                         ),
                         SizedBox(height: screenSize.height * 0.03),
-
-                        // Mute Button (kích thước động)
+                        // Mute Button
                         _buildSettingItem(
                           context,
                           label: 'Game Sound',
@@ -258,8 +268,7 @@ class _SettingsMenuState extends State<SettingsMenu>
                             ),
                           ),
                         ),
-
-                        // Volume Control (kích thước động)
+                        // Volume Control
                         Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: screenSize.height * 0.02),
@@ -289,8 +298,7 @@ class _SettingsMenuState extends State<SettingsMenu>
                             ),
                           ),
                         ),
-
-                        // Volume Control Bar (sử dụng LayoutBuilder)
+                        // Volume Control Bar
                         LayoutBuilder(
                           builder: (context, constraints) {
                             return Row(
@@ -313,7 +321,6 @@ class _SettingsMenuState extends State<SettingsMenu>
                                     onPressed: () => _adjustVolume(-0.1),
                                   ),
                                 ),
-
                                 // Thanh tiến trình
                                 Expanded(
                                   child: Padding(
@@ -326,7 +333,6 @@ class _SettingsMenuState extends State<SettingsMenu>
                                     ),
                                   ),
                                 ),
-
                                 // Tăng âm lượng
                                 Container(
                                   padding:
@@ -350,8 +356,7 @@ class _SettingsMenuState extends State<SettingsMenu>
                           },
                         ),
                         SizedBox(height: screenSize.height * 0.04),
-
-                        // Back Button (kích thước động)
+                        // Back Button - chuyển về Main Menu
                         Container(
                           decoration: BoxDecoration(
                             boxShadow: [
@@ -370,7 +375,7 @@ class _SettingsMenuState extends State<SettingsMenu>
                             text: 'BACK TO MENU',
                             width: screenSize.width * 0.18,
                             onPressed: () {
-                              _animationController.reverse().then((value) {
+                              _animationController.reverse().then((_) {
                                 Navigator.pushReplacement(
                                   context,
                                   PageRouteBuilder(
@@ -404,7 +409,7 @@ class _SettingsMenuState extends State<SettingsMenu>
     );
   }
 
-// Widget phụ trợ cho các item cài đặt
+  // Widget phụ trợ cho các item cài đặt
   Widget _buildSettingItem(BuildContext context,
       {required String label, required Widget child}) {
     final screenSize = MediaQuery.of(context).size;

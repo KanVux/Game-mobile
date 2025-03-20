@@ -4,6 +4,7 @@ import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/models/interactable.dart';
+import 'package:shieldbound/src/services/audio_service.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 import 'package:shieldbound/src/models/player.dart';
 
@@ -30,7 +31,7 @@ class SwordSlashAttack extends PositionComponent
     if (game.playSounds) {
       FlameAudio.play(
         'sound_effects/sword_slash_attack.mp3',
-        volume: game.volume,
+        volume: AudioService().volume,
       );
     }
     // Thêm CircleHitbox với bán kính đã định nghĩa.

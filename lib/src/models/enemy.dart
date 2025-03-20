@@ -7,6 +7,7 @@ import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
 import 'package:shieldbound/src/collisions/attack/enemy/enemy_melee_attack.dart';
+import 'package:shieldbound/src/services/audio_service.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 
 enum EnemyState {
@@ -130,7 +131,7 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
     debugPrint("$enemyName nhận sát thương: $damageTaken");
 
     if (game.playSounds) {
-      FlameAudio.play('sound_effects/enemy_hit_sound.wav', volume: game.volume);
+      FlameAudio.play('sound_effects/enemy_hit_sound.wav', volume: AudioService().volume);
     }
     health -= damageTaken;
 
