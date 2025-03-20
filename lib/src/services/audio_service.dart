@@ -10,6 +10,7 @@ class AudioService {
   double _volume = 0.5;
   double _sfxVolume = 0.7;
   bool _isMuted = false;
+  String? _currentBgmPath; // Lưu asset của nhạc nền đang phát
 
   double get volume => _volume;
   double get sfxVolume => _sfxVolume;
@@ -34,8 +35,9 @@ class AudioService {
     await FlameAudio.bgm.audioPlayer.setVolume(effectiveVolume);
   }
 
-  /// Phát background music từ asset, mỗi lần gọi sẽ phát một instance mới
+  /// Phát background music từ asset, mỗi lần gọi sẽ phát một instance mới và lưu lại asset path
   Future<void> playBackgroundMusic(String assetPath) async {
+    _currentBgmPath = assetPath;
     if (_isMuted) return;
     await FlameAudio.bgm.stop();
     await FlameAudio.bgm.play(assetPath, volume: _volume);
@@ -73,5 +75,9 @@ class AudioService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isMuted', _isMuted);
     await _applyVolumeSettings();
+    // Nếu vừa unmute, phát lại nhạc nền nếu đã có _currentBgmPath
+    if (!_isMuted && _currentBgmPath != null) {
+      await playBackgroundMusic(_currentBgmPath!);
+    }
   }
 }

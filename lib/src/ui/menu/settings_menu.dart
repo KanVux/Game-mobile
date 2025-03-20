@@ -6,7 +6,8 @@ import 'package:shieldbound/src/ui/menu/progress_bar.dart';
 import 'main_menu.dart';
 
 class SettingsMenu extends ConsumerStatefulWidget {
-  const SettingsMenu({super.key});
+  final bool fromPause; // Nếu true, mở từ pause menu
+  const SettingsMenu({Key? key, this.fromPause = false}) : super(key: key);
 
   @override
   ConsumerState<SettingsMenu> createState() => _SettingsMenuState();
@@ -71,22 +72,27 @@ class _SettingsMenuState extends ConsumerState<SettingsMenu>
     });
   }
 
-  /// Khi nhấn nút Back, chuyển về MainMenu thay vì quay lại game
+  /// Khi nhấn nút Back, nếu Settings mở từ Pause Menu thì pop trở về Pause Menu, ngược lại chuyển về MainMenu
   void _onBackPressed(BuildContext context) {
     _animationController.reverse().then((_) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => MainMenu(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
-          },
-          transitionDuration: Duration(milliseconds: 500),
-        ),
-      );
+      if (widget.fromPause) {
+        Navigator.pop(context);
+      } else {
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => MainMenu(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 500),
+          ),
+        );
+      }
     });
   }
 
@@ -375,25 +381,7 @@ class _SettingsMenuState extends ConsumerState<SettingsMenu>
                             text: 'BACK TO MENU',
                             width: screenSize.width * 0.18,
                             onPressed: () {
-                              _animationController.reverse().then((_) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  PageRouteBuilder(
-                                    pageBuilder: (context, animation,
-                                            secondaryAnimation) =>
-                                        MainMenu(),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      return FadeTransition(
-                                        opacity: animation,
-                                        child: child,
-                                      );
-                                    },
-                                    transitionDuration:
-                                        Duration(milliseconds: 500),
-                                  ),
-                                );
-                              });
+                              _onBackPressed(context);
                             },
                           ),
                         ),

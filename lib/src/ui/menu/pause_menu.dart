@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shieldbound/src/ui/menu/image_button.dart';
+import 'package:shieldbound/src/ui/menu/settings_menu.dart';
 
 class PauseMenu extends StatelessWidget {
   final VoidCallback onResumePressed;
@@ -89,7 +90,14 @@ class PauseMenu extends StatelessWidget {
                   width: buttonWidth,
                   onPressed: () {
                     HapticFeedback.lightImpact();
-                    onSettingsPressed();
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 500),
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const SettingsMenu(fromPause: true),
+                      ),
+                    );
                   },
                 ),
               ),
