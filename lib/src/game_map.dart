@@ -6,8 +6,10 @@ import 'package:shieldbound/src/collisions/collision_block.dart';
 import 'package:shieldbound/src/models/components/house_component.dart';
 import 'package:shieldbound/src/models/player.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shieldbound/src/providers/enemy_provider.dart';
+import 'package:shieldbound/src/models/enermies_classes/orc.dart';
 
-import 'models/enermies_classes/orc.dart';
 import 'models/components/tree_component.dart';
 
 class GameMap extends World with HasGameRef<Shieldbound> {
@@ -43,42 +45,18 @@ class GameMap extends World with HasGameRef<Shieldbound> {
       debugPrint('Error loading Tiled map: $e');
       debugPrint('$stackTrace');
     }
-
+    if (game.playSounds) {
+      // FlameAudio.play('musics/2.mp3', volume: game.volume * 0.1);
+    }
     // 3. Tính kích thước map
     mapWidth = map.tileMap.map.width * map.tileMap.map.tileWidth.toDouble();
     mapHeight = map.tileMap.map.height * map.tileMap.map.tileHeight.toDouble();
     debugPrint('Map width: $mapWidth, height: $mapHeight');
 
-    // 4. Lớp SpawnPoint: spawn Player và Enemy
-    final spawnPointLayer = map.tileMap.getLayer<ObjectGroup>('SpawnPoint');
-    if (spawnPointLayer != null) {
-      for (final spawnPoint in spawnPointLayer.objects) {
-        switch (spawnPoint.class_) {
-          case 'Player':
-            // Giữ player với anchor topLeft theo yêu cầu
-            player.position = Vector2(spawnPoint.x, spawnPoint.y);
-            player.anchor = Anchor.topLeft;
-            dynamicLayer.add(player);
-            break;
-          case 'Enemy':
-            final enemyClassMap = {
-              'Orc': () => Orc(position: Vector2(spawnPoint.x, spawnPoint.y)),
-              // Có thể thêm enemy khác vào đây
-            };
-            if (enemyClassMap.containsKey(spawnPoint.name)) {
-              final enemyInstance = enemyClassMap[spawnPoint.name]!();
-              // Giả sử enemy cũng có anchor topLeft
-              enemyInstance.anchor = Anchor.topLeft;
-              dynamicLayer.add(enemyInstance);
-            } else {
-              debugPrint('Không tìm thấy enemy với name: ${spawnPoint.name}');
-            }
-            break;
-        }
-      }
-    }
 
-    // 5. Lớp Collision: thêm vùng va chạm
+
+
+    // 4. Lớp Collision: thêm vùng va chạm
     final collisionLayerData = map.tileMap.getLayer<ObjectGroup>('Collision');
     if (collisionLayerData != null) {
       for (final block in collisionLayerData.objects) {
@@ -90,6 +68,42 @@ class GameMap extends World with HasGameRef<Shieldbound> {
         dynamicLayer.add(collisionBlock);
       }
     }
+
+    // 5. Lớp SpawnPoint: spawn Player và Enemy
+    final spawnPointLayer = map.tileMap.getLayer<ObjectGroup>('SpawnPoint');
+    if (spawnPointLayer != null) {
+      // Sử dụng một container Riverpod duy nhất (lưu ý: trong ứng dụng thật nên lấy từ ProviderScope đã được bọc widget gốc)
+      final container = ProviderContainer();
+      final enemyController = container.read(enemySpawnProvider.notifier);
+
+      for (final spawnPoint in spawnPointLayer.objects) {
+        switch (spawnPoint.class_) {
+          case 'Player':
+            // Giữ player với anchor topLeft theo yêu cầu
+            player.position = Vector2(spawnPoint.x, spawnPoint.y);
+            player.anchor = Anchor.topLeft;
+            dynamicLayer.add(player);
+            break;
+          case 'Enemy':
+            // Sử dụng cùng 1 spawn point để spawn nhiều enemy qua provider
+            enemyController.trySpawnEnemy(
+              (position) => Orc(position: position),
+              Vector2(spawnPoint.x, spawnPoint.y),
+            );
+            break;
+        }
+      }
+      // Sau khi xử lý spawn points, thêm các enemy từ provider vào dynamicLayer.
+      // (Lưu ý: với hệ thống thay đổi state, bạn cần update dynamicLayer khi state provider thay đổi.)
+      final enemyList = container.read(enemySpawnProvider);
+      for (final enemy in enemyList) {
+        // Đảm bảo enemy có anchor phù hợp
+        enemy.anchor = Anchor.topLeft;
+        enemy.collisionBlocks = collisionBlocks;
+        dynamicLayer.add(enemy);
+      }
+    }
+
 
     // 6. Lớp Interactables: thêm các đối tượng tương tác (ví dụ: Tree)
     final interactableLayer =
@@ -113,7 +127,7 @@ class GameMap extends World with HasGameRef<Shieldbound> {
 
     //truyền danh sách collisionBlocks cho player
     player.collisionBlocks = collisionBlocks;
-
+    
     return super.onLoad();
   }
 

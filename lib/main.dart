@@ -1,5 +1,6 @@
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shieldbound/src/ui/menu/main_menu.dart';
 
 bool isDebugModeActived = true;
@@ -9,7 +10,7 @@ void main() async {
   await Flame.device.fullScreen();
   await Flame.device.setLandscape();
 
-  runApp(const MyApp());
+  runApp(ProviderScope(child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

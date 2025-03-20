@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:shieldbound/shieldbound.dart';
@@ -8,58 +7,92 @@ import 'package:shieldbound/src/collisions/custom_hitbox.dart';
 class Attack extends SpriteComponent
     with HasGameRef<Shieldbound>, TapCallbacks {
   Attack();
-  // TODO: Sửa lại attack button cho mobile divces
-  final margin = 32; // Đệm nút
-  final buttonSize = 100; // Kích thước nút
+  final margin = 32;
+  final buttonSize = 100;
 
-  // Sprite cho nút tấn công
-  late final Sprite attackButton; // Trạng thái mặc định
-  late final Sprite attackButtonActive; // Trạng thái được kích hoạt
+  late final Sprite attackButton;
+  late final Sprite attackButtonActive;
 
-  // Hitbox cho đòn tấn công
-  CustomHitbox atkHitbox = CustomHitbox(
-    offset: Vector2.all(5),
-    size: Vector2.all(10),
+  late Timer attackTimer;
+  bool isAttackAnimationPlaying = false;
+
+  CustomHitbox weaponHitbox = CustomHitbox(
+    offset: Vector2(27, 25),
+    size: Vector2(15, 15),
   );
+
   @override
-  FutureOr<void> onLoad() {
-    // Thêm nút tấn công cho người chơi trên thiết bị di động
-    attackButton = _loadButtonSprite(
-        action: 'attack_button'); // Load sprite cho nút ở trạng thái mặc định
-    attackButtonActive = _loadButtonSprite(
-        action: 'attack_button',
-        state: 'active'); // Load sprite cho nút ở trạng thái kích hoạt
-    sprite = attackButton; // Trạng thái mặc định
+  FutureOr<void> onLoad() async {
+    // Load sprites
+    attackButton = _loadButtonSprite(action: 'attack_button');
+    attackButtonActive =
+        _loadButtonSprite(action: 'attack_button', state: 'active');
+    sprite = attackButton;
+
+    // Set position relative to viewport
     position = Vector2(
-      game.windowWidth - margin - buttonSize,
-      game.windowHeight - margin - buttonSize,
-    ); // Vị trí của nút
-    priority = 10; // Độ ưu tiên (Đặt cao hơn nếu các lớp khác đè lên)
+        game.windowWidth - margin - buttonSize,
+        game.windowHeight - margin - buttonSize,
+        );
+
+    // Initialize timer with fixed duration first
+    attackTimer = Timer(
+      0.4, // Default duration
+      onTick: () {
+        isAttackAnimationPlaying = false;
+        game.player.isAttackingAnimationPlaying = false;
+        game.player.resetToIdleState();
+        sprite = attackButton;
+      },
+    );
+
+    size = Vector2.all(buttonSize.toDouble());
+
     return super.onLoad();
   }
 
   @override
-  void onTapDown(TapDownEvent event) {
-    // Xử lý khi nút bấm
-    game.player.isAttacking = true;
-    sprite = attackButtonActive;
-    super.onTapDown(event);
+  bool onTapDown(TapDownEvent event) {
+    if (!game.player.isAttackingAnimationPlaying) {
+      attackTimer.start();
+      // HapticFeedback.mediumImpact();
+      game.player.attack();
+      sprite = attackButtonActive;
+    }
+    return true;
   }
 
   @override
-  void onTapUp(TapUpEvent event) {
-    // Xử lý khi thả nút
-    game.player.isAttacking = false;
+  bool onTapUp(TapUpEvent event) {
+    if (game.player.isAttackingAnimationPlaying) {
+      game.player.isAttacking = false;
+    }
     sprite = attackButton;
-    super.onTapUp(event);
+    return true;
   }
 
   @override
-  void onTapCancel(TapCancelEvent event) {
-    // Xử lý khi hủy thao tác (Đè và kéo ra ngoài khu vực nút)
-    game.player.isAttacking = false;
+  bool onTapCancel(TapCancelEvent event) {
+    if (game.player.isAttackingAnimationPlaying) {
+      game.player.isAttacking = false;
+    }
+    return true;
+  }
+
+  @override
+  void onLongTapDown(TapDownEvent event) {
+    if (game.player.isAttackingAnimationPlaying) {
+      game.player.isAttacking = false;
+    }
     sprite = attackButton;
-    super.onTapCancel(event);
+  }
+
+  @override
+  void update(double dt) {
+    if (isAttackAnimationPlaying) {
+      attackTimer.update(dt);
+    }
+    super.update(dt);
   }
 
   Sprite _loadButtonSprite({String? action, String? state}) {

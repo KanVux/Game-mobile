@@ -2,7 +2,6 @@ import 'package:flame/components.dart';
 import 'package:shieldbound/main.dart';
 import 'package:shieldbound/src/collisions/attack/hero/soldier/sword_slash_attack.dart';
 import 'package:shieldbound/src/models/player.dart';
-import 'package:shieldbound/src/services/audio_service.dart';
 
 class Soldier extends Player {
   Soldier({Vector2? position}) // Cho phép position là null
@@ -30,7 +29,6 @@ class Soldier extends Player {
     isAttackingAnimationPlaying = true;
 
     // Play sword draw/swing sound when starting the attack animation
-    AudioService().playSoundEffect('sword_swing', 'audio/sound_effects/atk_sound.wav');
 
     playerState = lastFacingDirection == PlayerFacing.left
         ? PlayerState.attackLeft
