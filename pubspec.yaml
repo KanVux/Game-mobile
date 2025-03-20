@@ -41,6 +41,7 @@ dependencies:
   flame_audio: ^2.11.1
   flame_riverpod: ^5.4.10
   flutter_riverpod: ^2.6.1
+  pocketbase: ^0.15.1
 
 dev_dependencies:
   flutter_test:
