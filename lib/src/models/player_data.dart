@@ -5,6 +5,7 @@ import 'player.dart';
 
 class PlayerData {
   final String id;
+  String name; // New field for player name
   String character;
   double health;
   double maxHealth;
@@ -14,6 +15,7 @@ class PlayerData {
 
   PlayerData({
     required this.id,
+    required this.name, // Added name as required parameter
     required this.character,
     required this.health,
     required this.maxHealth,
@@ -26,6 +28,7 @@ class PlayerData {
   factory PlayerData.fromJson(Map<String, dynamic> json) {
     return PlayerData(
       id: json['id'],
+      name: json['name'] ?? 'Unknown Hero', // Default name if not provided
       character: json['character'] ?? '',
       health: (json['health'] ?? 0).toDouble(),
       maxHealth: (json['maxHealth'] ?? 0).toDouble(),
@@ -38,6 +41,7 @@ class PlayerData {
   // Convert to JSON for PocketBase
   Map<String, dynamic> toJson() {
     return {
+      'name': name,
       'character': character,
       'health': health,
       'maxHealth': maxHealth,
@@ -68,9 +72,10 @@ class PlayerData {
 
   // Create PlayerData from a Player instance
   static PlayerData fromPlayer(Player player,
-      {required String id, int gold = 0}) {
+      {required String id, required String name, int gold = 0}) {
     return PlayerData(
       id: id,
+      name: name, // Add name parameter
       character: player.character,
       health: player.health,
       maxHealth: player.maxHealth,

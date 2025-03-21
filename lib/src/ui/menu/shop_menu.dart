@@ -244,7 +244,7 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
                   end: Offset.zero,
                 ).animate(_animation),
                 child: Padding(
-                  padding: EdgeInsets.all(screenSize.width * 0.03),
+                  padding: EdgeInsets.all(screenSize.width * 0.02),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -254,13 +254,16 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
                         children: [
                           Image.asset(
                             'assets/images/UI/Ribbons/Ribbon_Blue_3Slides.png',
-                            width: screenSize.width * 0.5,
+                            width: screenSize.width * 0.35,
+                            height: screenSize.height *
+                                0.08, // Add height constraint to keep it proportional
+                            fit: BoxFit.contain,
                           ),
                           Text(
                             'SHOP',
                             style: TextStyle(
                               fontFamily: 'MedievalSharp',
-                              fontSize: screenSize.width * 0.04,
+                              fontSize: screenSize.width * 0.03,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                               shadows: [
@@ -279,28 +282,36 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
                       if (playerData != null)
                         Container(
                           margin: EdgeInsets.symmetric(
-                              vertical: screenSize.height * 0.02),
+                              vertical: screenSize.height *
+                                  0.005), // Reduced from 0.01
                           padding: EdgeInsets.symmetric(
-                            horizontal: screenSize.width * 0.03,
-                            vertical: screenSize.height * 0.01,
+                            horizontal:
+                                screenSize.width * 0.02, // Reduced from 0.03
+                            vertical:
+                                screenSize.height * 0.004, // Reduced from 0.008
                           ),
                           decoration: BoxDecoration(
                             color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.amber, width: 2),
+                            borderRadius:
+                                BorderRadius.circular(8), // Reduced from 10
+                            border: Border.all(
+                                color: Colors.amber,
+                                width: 1.5), // Reduced border width from 2
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(Icons.monetization_on,
                                   color: Colors.amber,
-                                  size: screenSize.width * 0.04),
-                              SizedBox(width: 8),
+                                  size: screenSize.width *
+                                      0.03), // Reduced from 0.04
+                              SizedBox(width: 4), // Reduced from 8
                               Text(
                                 'Gold: ${playerData.gold}',
                                 style: TextStyle(
                                   fontFamily: 'MedievalSharp',
-                                  fontSize: screenSize.width * 0.035,
+                                  fontSize: screenSize.width *
+                                      0.03, // Reduced from 0.035
                                   color: Colors.amber,
                                 ),
                               ),
@@ -350,8 +361,10 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
                               padding: EdgeInsets.all(screenSize.width * 0.02),
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: screenSize.width > 600 ? 3 : 2,
-                                childAspectRatio: 0.75,
+                                crossAxisCount: screenSize.width > 800
+                                    ? 4
+                                    : (screenSize.width > 600 ? 3 : 2),
+                                childAspectRatio: 0.85,
                                 crossAxisSpacing: screenSize.width * 0.02,
                                 mainAxisSpacing: screenSize.width * 0.02,
                               ),
@@ -459,8 +472,8 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
           children: [
             // Item Icon
             Container(
-              width: screenSize.width * 0.08,
-              height: screenSize.width * 0.08,
+              width: screenSize.width * 0.06,
+              height: screenSize.width * 0.06,
               decoration: BoxDecoration(
                 color: item.isTrophy
                     ? Colors.amber.withOpacity(0.2)
@@ -482,23 +495,23 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
                         : item.affects == 'damage'
                             ? Colors.orange
                             : Colors.green,
-                size: screenSize.width * 0.05,
+                size: screenSize.width * 0.035,
               ),
             ),
-            SizedBox(height: screenSize.height * 0.01),
+            SizedBox(height: screenSize.height * 0.005),
 
             // Item Name
             Text(
               item.name,
               style: TextStyle(
                 fontFamily: 'MedievalSharp',
-                fontSize: screenSize.width * 0.025,
+                fontSize: screenSize.width * 0.022,
                 fontWeight: FontWeight.bold,
                 color: item.isTrophy ? Colors.amber : Colors.white,
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: screenSize.height * 0.005),
+            SizedBox(height: screenSize.height * 0.003),
 
             // Item Effect
             Text(
@@ -507,7 +520,7 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
                   : '+${item.increaseAmount.toInt()} ${item.affects.capitalize()}',
               style: TextStyle(
                 fontFamily: 'MedievalSharp',
-                fontSize: screenSize.width * 0.02,
+                fontSize: screenSize.width * 0.018,
                 color: item.affects == 'health'
                     ? Colors.red
                     : item.affects == 'damage'
@@ -518,13 +531,13 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: screenSize.height * 0.01),
+            SizedBox(height: screenSize.height * 0.008),
 
             // Item Price
             Container(
               padding: EdgeInsets.symmetric(
-                horizontal: screenSize.width * 0.02,
-                vertical: screenSize.height * 0.005,
+                horizontal: screenSize.width * 0.015,
+                vertical: screenSize.height * 0.003,
               ),
               decoration: BoxDecoration(
                 color: canAfford
@@ -538,14 +551,14 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
                   Icon(
                     Icons.monetization_on,
                     color: canAfford ? Colors.amber : Colors.red.shade300,
-                    size: screenSize.width * 0.025,
+                    size: screenSize.width * 0.02,
                   ),
-                  SizedBox(width: 4),
+                  SizedBox(width: 2),
                   Text(
                     '${item.price}',
                     style: TextStyle(
                       fontFamily: 'MedievalSharp',
-                      fontSize: screenSize.width * 0.025,
+                      fontSize: screenSize.width * 0.02,
                       color: canAfford ? Colors.amber : Colors.red.shade300,
                     ),
                   ),
@@ -575,8 +588,8 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
           child: GestureDetector(
             onTap: () {}, // Prevent closing when tapping on the card
             child: Container(
-              width: screenSize.width * 0.8,
-              padding: EdgeInsets.all(screenSize.width * 0.04),
+              width: screenSize.width * 0.7,
+              padding: EdgeInsets.all(screenSize.width * 0.03),
               decoration: BoxDecoration(
                 color: Colors.blue.shade900.withOpacity(0.9),
                 borderRadius: BorderRadius.circular(15),

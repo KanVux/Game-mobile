@@ -61,22 +61,15 @@ class Shieldbound extends FlameGame
 
       if (playerData == null) {
         // Create a new player if not found
-        playerData = PlayerData.fromPlayer(
-          player,
-          id: '', // Empty ID since this is a new record
-          gold: 100, // Starting gold
-        );
+        // Lưu ý: Chúng ta không tự tạo người chơi mới ở đây nữa
+        // vì điều này được xử lý bởi màn hình chọn nhân vật
 
-        final createdPlayer = await pocketbaseService.createPlayer(playerData);
-        if (createdPlayer != null) {
-          playerData = createdPlayer;
-          // Save the player ID for future reference
-          ref.read(currentPlayerIdProvider.notifier).state = createdPlayer.id;
-        }
-      }
-
-      // Update player based on stored data
-      if (playerData != null) {
+        // Chuyển hướng về màn hình chọn nhân vật sẽ được xử lý ở UI
+        // Do đó chỉ log thông báo
+        print(
+            'No player data found, user should select or create player first');
+      } else {
+        // Update player based on stored data
         if (playerData.character == 'Wizard') {
           player = Wizard();
         } else {

@@ -47,6 +47,21 @@ class PocketBaseService {
     }
   }
 
+  Future<List<PlayerData>> getAllPlayers() async {
+    try {
+      final response = await pb.collection('players').getList(
+            page: 1,
+            perPage: 50,
+          );
+      return response.items
+          .map((item) => PlayerData.fromJson(item.toJson()))
+          .toList();
+    } catch (e) {
+      print('Error fetching players: $e');
+      return [];
+    }
+  }
+
   // Create a new player
   Future<PlayerData?> createPlayer(PlayerData player) async {
     try {

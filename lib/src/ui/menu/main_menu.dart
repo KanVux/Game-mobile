@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../game_wrapper.dart';
+import 'player_selection_screen.dart';
 import 'settings_menu.dart';
 import 'dart:math' as math;
 
@@ -205,14 +206,14 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
       {
         'text': 'Start Game',
         'onPressed': () {
-          Navigator.pushReplacement(
+          Navigator.push(
             context,
             PageRouteBuilder(
               transitionDuration: const Duration(milliseconds: 500),
               pageBuilder: (context, animation, secondaryAnimation) {
                 return FadeTransition(
                   opacity: animation,
-                  child: GameWrapper(),
+                  child: PlayerSelectionScreen(),
                 );
               },
             ),
