@@ -1,10 +1,13 @@
 import 'package:flame/game.dart';
+import 'package:shieldbound/src/models/hero_classes/soilder.dart';
+import 'package:shieldbound/src/models/hero_classes/wizard.dart';
 import 'player.dart';
 
 class PlayerData {
   final String id;
   String character;
   double health;
+  double maxHealth;
   double damage;
   double moveSpeed;
   int gold;
@@ -13,6 +16,7 @@ class PlayerData {
     required this.id,
     required this.character,
     required this.health,
+    required this.maxHealth,
     required this.damage,
     required this.moveSpeed,
     required this.gold,
@@ -24,6 +28,7 @@ class PlayerData {
       id: json['id'],
       character: json['character'] ?? '',
       health: (json['health'] ?? 0).toDouble(),
+      maxHealth: (json['maxHealth'] ?? 0).toDouble(),
       damage: (json['damage'] ?? 0).toDouble(),
       moveSpeed: (json['moveSpeed'] ?? 0).toDouble(),
       gold: json['gold'] ?? 0,
@@ -35,38 +40,40 @@ class PlayerData {
     return {
       'character': character,
       'health': health,
+      'maxHealth': maxHealth,
       'damage': damage,
       'moveSpeed': moveSpeed,
       'gold': gold,
     };
   }
 
-  // Tạo Player từ PlayerData
-  // void applyToPlayer(Player player) {
-  //   player.character = character;
-  //   player.health = health;
-  //   player.damage = damage;
-  //   player.moveSpeed = moveSpeed;
-  //   // Không cần áp dụng gold vì nó không được sử dụng trong Player
-  // }  
+  // Create a player instance from PlayerData
+  Player createPlayer(Vector2 position) {
+    // This is where we instantiate the appropriate player class based on the character
+    if (character == 'Soldier') {
+      return Soldier(
+        position: position,
+      );
+    } else if (character == 'Wizard') {
+      return Wizard(
+        position: position,
+      );
+    }
 
-  Player createPlayer() {
-    return Player(
-      character: character,
-      health: health,
-      damage: damage,
-      moveSpeed: moveSpeed,
-      position: Vector2.zero(), // hoặc vị trí mặc định khác
+    // Default to Soldier if character type is not recognized
+    return Soldier(
+      position: position,
     );
   }
 
-  // Tạo PlayerData từ Player
+  // Create PlayerData from a Player instance
   static PlayerData fromPlayer(Player player,
       {required String id, int gold = 0}) {
     return PlayerData(
       id: id,
       character: player.character,
       health: player.health,
+      maxHealth: player.maxHealth,
       damage: player.damage,
       moveSpeed: player.moveSpeed,
       gold: gold,
