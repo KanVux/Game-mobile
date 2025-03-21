@@ -1,3 +1,4 @@
+import 'package:flame/game.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,6 +40,13 @@ class _GameWrapperState extends ConsumerState<GameWrapper> {
       debugPrint('Error initializing game: $e');
     }
 
+    // game.onGamePaused = () {
+    //   if (mounted) {
+    //     setState(() {
+    //       showPauseMenu = true;
+    //     });
+    //   }
+    // };
     game.onGamePaused = () {
       if (mounted) {
         setState(() {
@@ -46,13 +54,25 @@ class _GameWrapperState extends ConsumerState<GameWrapper> {
         });
       }
     };
+    print(ref.read(gameProvider.notifier).state?.onGamePaused); // null
   }
 
   void resumeGame() {
     setState(() {
       showPauseMenu = false;
+    });
+
+    // Use post frame callback to ensure UI is updated first
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       game.resumeGame();
     });
+  }
+
+  @override
+  void dispose() {
+    game.pauseEngine();
+    super.dispose();
   }
 
   void openSettings() {

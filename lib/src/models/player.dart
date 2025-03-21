@@ -385,7 +385,7 @@ abstract class Player extends SpriteAnimationGroupComponent
           volume: AudioService().volume);
     }
 
-    game.ref.read(playerHealthProvider.notifier).state = health.toInt();
+    // game.ref.read(playerHealthProvider.notifier).state = health.toInt();
     health -= damageTaken;
     if (health < 0) health = 0;
     isHurt = true;
