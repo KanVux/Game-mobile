@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'player_selection_screen.dart';
@@ -21,10 +20,13 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
   late final Animation<double> _titleScaleAnimation;
   late final Animation<double> _titleGlowAnimation;
   bool _showCredits = false;
+  
+
 
   @override
   void initState() {
     super.initState();
+
     // Title animation setup
     _titleAnimationController = AnimationController(
       duration: const Duration(milliseconds: 1500),

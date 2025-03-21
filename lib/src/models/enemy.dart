@@ -8,6 +8,7 @@ import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/collision_block.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
 import 'package:shieldbound/src/collisions/utils.dart';
+import 'package:shieldbound/src/providers/enemy_provider.dart';
 import 'package:shieldbound/src/services/audio_service.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 
@@ -32,7 +33,7 @@ enum EnemyFacing {
   right,
 }
 
-class Enemy extends SpriteAnimationGroupComponent<EnemyState>
+abstract class Enemy extends SpriteAnimationGroupComponent<EnemyState>
     with HasGameRef<Shieldbound>, CollisionCallbacks
     implements Damageable {
   // ignore: use_super_parameters
@@ -358,6 +359,14 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
         }
       }
     }
+  }
+
+  @override
+  void onRemove() {
+    debugPrint('Enemy onRemove called for ${runtimeType}');
+    final enemyController = game.ref.read(enemySpawnProvider.notifier);
+    enemyController.removeEnemy(this);
+    super.onRemove();
   }
 }
 

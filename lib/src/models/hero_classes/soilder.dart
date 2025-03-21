@@ -17,6 +17,7 @@ class Soldier extends Player {
   @override
   Future<void> onLoad() async {
     debugMode = isDebugModeActivated;
+    if (debugMode) damage = 100;
     await super.onLoad();
     // Có thể thêm logic đặc biệt cho Soldier ở đây
   }

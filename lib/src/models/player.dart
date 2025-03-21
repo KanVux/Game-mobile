@@ -1,21 +1,20 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame_audio/flame_audio.dart';
+import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/collision_block.dart';
 import 'package:shieldbound/src/collisions/custom_hitbox.dart';
-import 'package:shieldbound/src/models/components/house_component.dart';
-import 'package:shieldbound/src/models/components/tree_component.dart';
+import 'package:shieldbound/src/models/interactable.dart';
+import 'package:shieldbound/src/providers/enemy_provider.dart';
 import 'package:shieldbound/src/providers/provider.dart';
 import 'package:shieldbound/src/services/audio_service.dart';
-import 'package:shieldbound/src/ui/hud_overlay.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 import 'package:shieldbound/src/collisions/utils.dart';
 
@@ -41,7 +40,8 @@ abstract class Player extends SpriteAnimationGroupComponent
         HasGameRef<Shieldbound>,
         KeyboardHandler,
         TapCallbacks,
-        CollisionCallbacks
+        CollisionCallbacks,
+        RiverpodComponentMixin
     implements Damageable {
   Player({
     required this.health,
@@ -141,15 +141,17 @@ abstract class Player extends SpriteAnimationGroupComponent
 
     // Thêm listener để cập nhật provider khi health thay đổi
 
-   
-
     return super.onLoad();
   }
 
   @override
   void update(double dt) {
+    final isGameCompleted = ref.watch(gameCompletedProvider);
     previousPosition = position.clone();
-
+    if (isGameCompleted) {
+      removeFromParent();
+      gameRef.overlays.add('GameOverScreen');
+    }
     if (isHurt) {
       hurtTimer.update(dt);
     } else if (!isDead) {
@@ -387,7 +389,6 @@ abstract class Player extends SpriteAnimationGroupComponent
           volume: AudioService().volume);
     }
 
-   
     health -= damageTaken;
     if (health < 0) health = 0;
 
@@ -442,13 +443,19 @@ abstract class Player extends SpriteAnimationGroupComponent
     }
   }
 
+  void heal(int amount) {
+    health += amount;
+    if (health > maxHealth) health = maxHealth;
+    game.ref.read(playerHealthProvider.notifier).state = health.toInt();
+  }
+
   // Overide ở lớp con
   void attack() {}
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is TreeComponent || other is HouseComponent) {
-      position = previousPosition.clone();
+    if (other is Interactable) {
+      position = previousPosition.clone() + velocity * -0.001;
     }
     super.onCollision(intersectionPoints, other);
   }

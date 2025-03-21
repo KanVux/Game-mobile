@@ -1,12 +1,13 @@
 import 'package:flame/components.dart';
 import 'package:shieldbound/src/collisions/attack/enemy/enemy_melee_attack.dart';
 import 'package:shieldbound/src/models/enemy.dart';
+import 'package:shieldbound/src/providers/enemy_provider.dart';
 
 class EliteOrc extends Enemy {
   EliteOrc({Vector2? position}) // Cho phép position là null
       : super(
           health: 300,
-          damage: 10,
+          damage: 30,
           moveSpeed: 80,
           position: position ??
               Vector2.zero(), // Mặc định là (0,0) nếu không truyền vào
@@ -77,5 +78,11 @@ class EliteOrc extends Enemy {
             : EnemyState.idleRight;
       },
     );
+  }
+
+  @override
+  void onRemove() {
+    game.ref.read(gameCompletedProvider.notifier).state = true;
+    super.onRemove();
   }
 }

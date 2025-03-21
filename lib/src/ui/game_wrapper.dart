@@ -1,8 +1,8 @@
-import 'package:flame/game.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shieldbound/shieldbound.dart';
+import 'package:shieldbound/src/providers/enemy_provider.dart';
 import 'package:shieldbound/src/ui/menu/main_menu.dart';
 import 'package:shieldbound/src/ui/menu/pause_menu.dart';
 import 'package:shieldbound/src/ui/menu/settings_menu.dart';
@@ -89,10 +89,12 @@ class _GameWrapperState extends ConsumerState<GameWrapper> {
   }
 
   void returnToMainMenu() {
+    // Reset the game completed state so the player can play again.
+    ref.read(gameCompletedProvider.notifier).state = false;
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => MainMenu(),
+        builder: (context) => const MainMenu(),
       ),
     );
   }

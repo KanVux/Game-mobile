@@ -3,9 +3,10 @@ import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 import 'package:shieldbound/main.dart';
 import 'package:shieldbound/shieldbound.dart';
+import 'package:shieldbound/src/models/interactable.dart';
 
 class TreeComponent extends SpriteComponent
-    with CollisionCallbacks, HasGameRef<Shieldbound> {
+    with CollisionCallbacks, HasGameRef<Shieldbound> implements Interactable {
   TreeComponent({required Vector2 position}) : super(position: position);
 
   @override

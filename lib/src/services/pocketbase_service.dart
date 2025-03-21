@@ -9,15 +9,27 @@ class PocketBaseService {
   // Singleton pattern
   static final PocketBaseService _instance = PocketBaseService._internal();
   factory PocketBaseService() => _instance;
-  PocketBaseService._internal();
-
+  // PocketBaseService._internal();
+  bool _initialized = false;
   // Replace with your PocketBase URL
-  final String baseUrl = 'http://10.0.2.2:8090'; // URL for Android emulator
+  final String baseUrl = 'http://127.0.0.1:8090'; // URL for Android emulator
   late final PocketBase pb;
 
+  PocketBaseService._internal(){
+    pb = PocketBase(baseUrl);
+  }
+  
   // Initialize the PocketBase client
   Future<void> initialize() async {
-    pb = PocketBase(baseUrl);
+        if (_initialized) return;
+
+    try {
+      await logConnectionTest();
+      _initialized = true;
+    } catch (e) {
+      print('Failed to initialize PocketBase: $e');
+      rethrow;
+    }
     // Add any initialization logic here
   }
 

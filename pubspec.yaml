@@ -74,6 +74,10 @@ flutter:
     - assets/images/Terrain/Bridge/
     - assets/images/Resources/Trees/
     - assets/images/Factions/Knights/Buildings/House/
+    - assets/images/Factions/Goblins/Buildings/Wood_House/
+    - assets/images/Factions/Knights/Buildings/Tower/
+    - assets/images/Factions/Knights/Buildings/Castle/
+
     # Building assets
     - assets/tiles/
 
@@ -87,7 +91,6 @@ flutter:
     # Hub assets
     - assets/images/Hub/
     - assets/images/UI/Banners/
-
 
     # Menu assets
     - assets/images/UI/Background/menu_background.png

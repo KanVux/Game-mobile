@@ -3,7 +3,10 @@ import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shieldbound/shieldbound.dart';
 import 'package:shieldbound/src/collisions/collision_block.dart';
+import 'package:shieldbound/src/models/components/castle_component.dart';
+import 'package:shieldbound/src/models/components/healing_house_component.dart';
 import 'package:shieldbound/src/models/components/house_component.dart';
+import 'package:shieldbound/src/models/components/tower_component.dart';
 import 'package:shieldbound/src/models/player.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,9 +54,6 @@ class GameMap extends World with HasGameRef<Shieldbound> {
     mapWidth = map.tileMap.map.width * map.tileMap.map.tileWidth.toDouble();
     mapHeight = map.tileMap.map.height * map.tileMap.map.tileHeight.toDouble();
     debugPrint('Map width: $mapWidth, height: $mapHeight');
-
-
-
 
     // 4. Lớp Collision: thêm vùng va chạm
     final collisionLayerData = map.tileMap.getLayer<ObjectGroup>('Collision');
@@ -103,7 +103,6 @@ class GameMap extends World with HasGameRef<Shieldbound> {
       }
     }
 
-
     // 6. Lớp Interactables: thêm các đối tượng tương tác (ví dụ: Tree)
     final interactableLayer =
         map.tileMap.getLayer<ObjectGroup>('Interactables');
@@ -120,16 +119,29 @@ class GameMap extends World with HasGameRef<Shieldbound> {
             final house = HouseComponent(position: Vector2(obj.x, obj.y));
             dynamicLayer.add(house);
             break;
+          case 'Healing_House':
+            final healingHouse =
+                HealingHouseComponent(position: Vector2(obj.x, obj.y));
+            dynamicLayer.add(healingHouse);
+            break;
+          case 'Blue_Tower':
+            final tower = TowerComponent(position: Vector2(obj.x, obj.y));
+            dynamicLayer.add(tower);
+            break;
+          case 'Castle':
+            final castle = CastleComponent(position: Vector2(obj.x, obj.y));
+            dynamicLayer.add(castle);
+            break;
         }
       }
     }
 
     //truyền danh sách collisionBlocks cho player
     player.collisionBlocks = collisionBlocks;
-    
+
     return super.onLoad();
   }
-
+  
   @override
   void update(double dt) {
     super.update(dt);

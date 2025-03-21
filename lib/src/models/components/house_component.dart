@@ -4,8 +4,9 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:shieldbound/main.dart';
+import 'package:shieldbound/src/models/interactable.dart';
 
-class HouseComponent extends SpriteComponent {
+class HouseComponent extends SpriteComponent implements Interactable {
   HouseComponent({required Vector2 position})
       : super(
           position: position,

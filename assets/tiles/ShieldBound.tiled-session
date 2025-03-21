@@ -26,16 +26,18 @@
         },
         "Home.tmx": {
             "expandedObjectLayers": [
-                8,
                 13,
                 3
             ],
-            "scale": 1.5,
-            "selectedLayer": 11,
+            "scale": 2,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 806,
-                "y": 202.33333333333337
+                "x": 1712,
+                "y": 376.75
             }
+        },
+        "House_Blue.tsx": {
+            "scaleInDock": 1
         },
         "Rocks_01.tsx": {
             "scaleInDock": 1,
@@ -106,7 +108,7 @@
         }
     },
     "frame.defaultDuration": 0,
-    "last.imagePath": "D:/Games/shieldbound/assets/images/Factions/Knights/Buildings/House",
+    "last.imagePath": "D:/Games/shieldbound/assets/images/Factions/Knights/Buildings/Castle",
     "map.height": 60,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
@@ -130,6 +132,7 @@
     ],
     "project": "ShieldBound.tiled-project",
     "recentFiles": [
+        "Home.tmx",
         "map_spawn.tmx",
         "Water.tsx",
         "Rocks_01.tsx",
@@ -140,8 +143,7 @@
         "Tilemap_Flat.tsx",
         "Bridge_All.tsx",
         "Rocks_02.tsx",
-        "map_01.tmx",
-        "Tree.tsx"
+        "map_01.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.spacing": 1,

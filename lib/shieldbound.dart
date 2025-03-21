@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:shieldbound/src/models/hero_classes/soilder.dart';
 import 'package:shieldbound/src/providers/provider.dart';
 import 'package:shieldbound/src/services/audio_service.dart';
-import 'package:shieldbound/src/ui/game_wrapper.dart';
 import 'package:shieldbound/src/ui/mobile/attack.dart';
 import 'package:shieldbound/src/ui/mobile/pause_button.dart';
 import 'package:shieldbound/src/game_map.dart';
