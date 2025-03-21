@@ -222,6 +222,8 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
         // Update the gold provider
         game.ref.read(playerGoldProvider.notifier).state = playerData.gold;
 
+        game.ref.read(playerDataProvider.notifier).state = playerData;
+
         // Save to PocketBase in the background
         Future(() async {
           final pocketbaseService = game.ref.read(pocketbaseServiceProvider);
