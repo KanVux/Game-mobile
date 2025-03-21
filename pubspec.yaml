@@ -82,9 +82,12 @@ flutter:
     - assets/images/Characters/Orc/Orc/
     - assets/images/Characters/Wizard/Wizard/
     - assets/images/Characters/Wizard/effect/
+    - assets/images/Characters/EliteOrc/EliteOrc/
 
     # Hub assets
     - assets/images/Hub/
+    - assets/images/UI/Banners/
+
 
     # Menu assets
     - assets/images/UI/Background/menu_background.png

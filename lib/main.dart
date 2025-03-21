@@ -5,7 +5,7 @@ import 'package:shieldbound/src/ui/menu/main_menu.dart';
 
 import 'src/services/pocketbase_service.dart';
 
-bool isDebugModeActived = true;
+bool isDebugModeActivated = true;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +21,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

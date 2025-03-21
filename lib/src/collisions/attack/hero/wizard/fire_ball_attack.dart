@@ -27,7 +27,7 @@ class FireballAttack extends SpriteAnimationComponent
 
   @override
   Future<void> onLoad() async {
-    debugMode = isDebugModeActived;
+    debugMode = isDebugModeActivated;
 
     // Play fireball launch sound
 
