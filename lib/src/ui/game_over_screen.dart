@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shieldbound/src/ui/game_wrapper.dart';
 
 // Riverpod provider to store gold earned
-///final goldProvider =StateProvider<int>((ref) => 0);
+final goldProvider =StateProvider<int>((ref) => 0);
 
 class GameOverScreen extends ConsumerWidget {
   const GameOverScreen({super.key});
@@ -45,7 +45,7 @@ class GameOverScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                'Vàng thu được: (goldEarned)',
+                'Vàng thu được: ${ref.watch(goldProvider)}',
                 style: TextStyle(
                   fontFamily: 'MedievalSharp',
                   fontSize: 24,

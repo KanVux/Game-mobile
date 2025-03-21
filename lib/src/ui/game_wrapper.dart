@@ -40,13 +40,6 @@ class _GameWrapperState extends ConsumerState<GameWrapper> {
       debugPrint('Error initializing game: $e');
     }
 
-    // game.onGamePaused = () {
-    //   if (mounted) {
-    //     setState(() {
-    //       showPauseMenu = true;
-    //     });
-    //   }
-    // };
     game.onGamePaused = () {
       if (mounted) {
         setState(() {
