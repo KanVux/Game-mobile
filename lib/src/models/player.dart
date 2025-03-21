@@ -19,6 +19,8 @@ import 'package:shieldbound/src/ui/hud_overlay.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 import 'package:shieldbound/src/collisions/utils.dart';
 
+import '../services/pocketbase_service.dart';
+
 enum PlayerState {
   idleLeft,
   idleRight,
@@ -385,11 +387,26 @@ abstract class Player extends SpriteAnimationGroupComponent
           volume: AudioService().volume);
     }
 
-    game.ref.read(playerHealthProvider.notifier).state = health.toInt();
     health -= damageTaken;
     if (health < 0) health = 0;
+
+    // Update player health provider
+    game.ref.read(playerHealthProvider.notifier).state = health.toInt();
+
+    // Update PocketBase if we have player data
+    final playerData = game.ref.read(playerDataProvider);
+    if (playerData != null) {
+      playerData.health = health;
+
+      // Use a Future to update PocketBase without blocking the game
+      Future(() async {
+        final pocketbaseService = game.ref.read(pocketbaseServiceProvider);
+        await pocketbaseService.updatePlayer(playerData);
+      });
+    }
+
     isHurt = true;
-  
+
     // Cancel any ongoing attack
     isAttacking = false;
     isAttackingAnimationPlaying = false;

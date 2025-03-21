@@ -6,6 +6,8 @@ import '../game_wrapper.dart';
 import 'settings_menu.dart';
 import 'dart:math' as math;
 
+import 'shop_menu.dart';
+
 class MainMenu extends StatefulWidget{
   const MainMenu({super.key});
 
@@ -203,7 +205,6 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
       {
         'text': 'Start Game',
         'onPressed': () {
-
           Navigator.pushReplacement(
             context,
             PageRouteBuilder(
@@ -212,6 +213,24 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
                 return FadeTransition(
                   opacity: animation,
                   child: GameWrapper(),
+                );
+              },
+            ),
+          );
+        },
+      },
+      {
+        'text': 'Shop',
+        'onPressed': () {
+          HapticFeedback.lightImpact();
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              transitionDuration: const Duration(milliseconds: 500),
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: ShopMenu(),
                 );
               },
             ),
