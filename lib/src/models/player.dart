@@ -387,6 +387,7 @@ abstract class Player extends SpriteAnimationGroupComponent
           volume: AudioService().volume);
     }
 
+   
     health -= damageTaken;
     if (health < 0) health = 0;
 

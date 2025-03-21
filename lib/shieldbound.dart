@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:shieldbound/src/models/hero_classes/soilder.dart';
 import 'package:shieldbound/src/providers/provider.dart';
 import 'package:shieldbound/src/services/audio_service.dart';
+import 'package:shieldbound/src/ui/game_wrapper.dart';
 import 'package:shieldbound/src/ui/mobile/attack.dart';
 import 'package:shieldbound/src/ui/mobile/pause_button.dart';
 import 'package:shieldbound/src/game_map.dart';
@@ -45,9 +46,7 @@ class Shieldbound extends FlameGame
     await super.onLoad();
 
     try {
-      // Initialize default player first
-      player = Soldier();
-
+      // Khởi tạo player trước
       // Load player data from PocketBase if available
       final pocketbaseService = ref.read(pocketbaseServiceProvider);
       final playerId = ref.read(currentPlayerIdProvider);
@@ -190,21 +189,29 @@ class Shieldbound extends FlameGame
   // Toggle game pause state
   void togglePause() {
     isPaused = !isPaused;
-
     if (isPaused) {
+      pauseEngine();
       AudioService().stopBackgroundMusic();
       if (onGamePaused != null) {
         onGamePaused!();
       }
-      // Stop player movement
       player.moveDirection = Vector2.zero();
+    } else {
+      resumeEngine();
+      if (playSounds) {
+        ref.read(audioServiceProvider).playBackgroundMusic('musics/2.mp3');
+      }
     }
-
-    // You might add sound effects here
   }
 
   // Resume the game
   void resumeGame() {
-    isPaused = false;
+    if (isPaused) {
+      isPaused = false;
+      resumeEngine();
+      if (playSounds) {
+        ref.read(audioServiceProvider).playBackgroundMusic('musics/2.mp3');
+      }
+    }
   }
 }
