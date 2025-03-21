@@ -15,6 +15,10 @@ import 'package:shieldbound/src/ui/mobile/pause_button.dart';
 import 'package:shieldbound/src/game_map.dart';
 import 'package:shieldbound/src/models/player.dart';
 
+import 'src/models/hero_classes/wizard.dart';
+import 'src/models/player_data.dart';
+import 'src/services/pocketbase_service.dart';
+
 class Shieldbound extends FlameGame
     with
         HasKeyboardHandlerComponents,
@@ -42,30 +46,71 @@ class Shieldbound extends FlameGame
     await super.onLoad();
 
     try {
-      // Cập nhật provider với player instance
-      ref.read(playerProvider.notifier).state = player;
+      // Khởi tạo player trước
+      // Load player data from PocketBase if available
+      final pocketbaseService = ref.read(pocketbaseServiceProvider);
+      final playerId = ref.read(currentPlayerIdProvider);
 
-      // Cập nhật health provider với giá trị máu ban đầu
+      PlayerData? playerData;
+
+      if (playerId != null) {
+        // Try to load existing player
+        playerData = await pocketbaseService.getPlayer(playerId);
+      }
+
+      if (playerData == null) {
+        // Create a new player if not found
+        // Lưu ý: Chúng ta không tự tạo người chơi mới ở đây nữa
+        // vì điều này được xử lý bởi màn hình chọn nhân vật
+
+        // Chuyển hướng về màn hình chọn nhân vật sẽ được xử lý ở UI
+        // Do đó chỉ log thông báo
+        print(
+            'No player data found, user should select or create player first');
+      } else {
+        // Update player based on stored data
+        if (playerData.character == 'Wizard') {
+          player = Wizard();
+        } else {
+          player = Soldier();
+        }
+
+        // Apply stored stats
+        player.health = playerData.maxHealth;
+        player.maxHealth = playerData.maxHealth;
+        player.damage = playerData.damage;
+        player.moveSpeed = playerData.moveSpeed;
+
+        playerData.health = playerData.maxHealth;
+
+        // Update providers
+        ref.read(playerDataProvider.notifier).state = playerData;
+        ref.read(playerGoldProvider.notifier).state = playerData.gold;
+        ref.read(playerHealthProvider.notifier).state = player.health.toInt();
+      }
+
+      // Update providers with player instance
+      ref.read(playerProvider.notifier).state = player;
       ref.read(playerHealthProvider.notifier).state = player.health.toInt();
 
       // Load images first
       await images.loadAllImages();
 
-      // Sử dụng ref từ RiverpodGameMixin
+      // Use ref from RiverpodGameMixin
       final audioService = ref.read(audioServiceProvider);
       await audioService.initialize();
       await audioService.playBackgroundMusic('musics/2.mp3');
-      debugPrint('Error initializing audio service');
 
-      // Tạo một map
+      // Create a map
       final gameMap = GameMap(
         mapName: 'Home',
         player: player,
       );
-      // Tạo góc camera với:
+
+      // Create camera component with:
       // world: gameMap
-      // width: chiều rộng cửa sổ game
-      // height: chiều cao cửa sổ game
+      // width: window width
+      // height: window height
       cam = CameraComponent.withFixedResolution(
         world: gameMap,
         width: windowWidth,
@@ -74,7 +119,7 @@ class Shieldbound extends FlameGame
 
       cam.viewfinder.anchor = Anchor.center;
       cam.follow(player);
-      // Độ ưu tiên của cam
+      // Camera priority
       cam.priority = -1;
       await addAll([cam, gameMap]);
 

@@ -11,6 +11,9 @@ import 'package:shieldbound/src/collisions/utils.dart';
 import 'package:shieldbound/src/services/audio_service.dart';
 import 'package:shieldbound/src/utils/damageable.dart';
 
+import '../providers/provider.dart';
+import '../services/pocketbase_service.dart';
+
 enum EnemyState {
   idleLeft,
   idleRight,
@@ -142,7 +145,10 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
     health -= damageTaken;
 
     if (health <= 0) {
-      // Nếu enemy chết, chuyển sang trạng thái death dựa trên hướng hiện tại
+      // If enemy dies, award gold to the player
+      _awardGoldToPlayer();
+
+      // If enemy is dead, change to death state based on current direction
       if (current == EnemyState.idleLeft ||
           current == EnemyState.walkLeft ||
           current == EnemyState.attackLeft) {
@@ -150,7 +156,7 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
       } else {
         current = EnemyState.deathRight;
       }
-      // Ép kiểu animations không null
+      // Force non-null animation
       final deathAnim = animations![current];
       if (deathAnim != null) {
         Future.delayed(
@@ -165,7 +171,7 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
         removeFromParent();
       }
     } else {
-      // Nếu enemy còn sống, chuyển sang trạng thái hurt và play animation hurt
+      // If enemy is still alive, play hurt animation
       EnemyState hurtState;
       if (current == EnemyState.idleLeft ||
           current == EnemyState.walkLeft ||
@@ -182,7 +188,7 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
             milliseconds: (hurtAnim.totalDuration() * 1000).toInt(),
           ),
           () {
-            // Sau khi animation hurt hoàn thành, chuyển lại về trạng thái idle tương ứng
+            // After hurt animation completes, return to idle state
             if (hurtState == EnemyState.hurtLeft) {
               current = EnemyState.idleLeft;
             } else {
@@ -191,6 +197,43 @@ class Enemy extends SpriteAnimationGroupComponent<EnemyState>
           },
         );
       }
+    }
+  }
+
+// Add this private method to award gold to the player
+  void _awardGoldToPlayer() {
+    try {
+      // Award different gold amounts based on enemy type
+      int goldAmount = 10; // Base gold amount
+
+      // Award more gold for boss enemies
+      if (enemyName == 'EliteOrc') {
+        goldAmount = 50;
+      } else if (enemyName == 'Orc') {
+        goldAmount = 20;
+      }
+
+      // Get the player data from the provider
+      final playerData = game.ref.read(playerDataProvider);
+      if (playerData != null) {
+        // Add gold to player
+        playerData.gold += goldAmount;
+
+        // Update the gold provider
+        game.ref.read(playerGoldProvider.notifier).state = playerData.gold;
+
+        game.ref.read(playerDataProvider.notifier).state = playerData;
+
+        // Save to PocketBase in the background
+        Future(() async {
+          final pocketbaseService = game.ref.read(pocketbaseServiceProvider);
+          await pocketbaseService.updatePlayer(playerData);
+        });
+
+        debugPrint("Awarded $goldAmount gold to player");
+      }
+    } catch (e) {
+      debugPrint("Error awarding gold: $e");
     }
   }
 
