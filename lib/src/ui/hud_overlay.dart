@@ -17,8 +17,8 @@ class HudOverlay extends ConsumerWidget {
     final damage = ref.watch(playerDamageProvider);
     
     return Positioned(
-      left: 28,
-      top: 50,
+      left: 0,
+      top: 0,
       child: Container(
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(
@@ -30,32 +30,30 @@ class HudOverlay extends ConsumerWidget {
             fit: BoxFit.cover,
           ),
         ),
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(9),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Vàng: ${gold.toString()}',
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 15,
                 color: Colors.amber,
                 fontFamily: 'MedievalSharp',
               ),
             ),
-            const SizedBox(height: 10),
             Text(
               'Máu: ${health.toString()}',
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 15,
                 color: Colors.red,
                 fontFamily: 'MedievalSharp',
               ),
             ),
-            const SizedBox(height: 10),
             Text(
               'Damage: ${damage.toString()}',
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 15,
                 color: Colors.white,
                 fontFamily: 'MedievalSharp',
               ),

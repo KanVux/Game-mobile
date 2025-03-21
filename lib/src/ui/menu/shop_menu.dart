@@ -588,179 +588,200 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
           child: GestureDetector(
             onTap: () {}, // Prevent closing when tapping on the card
             child: Container(
-              width: screenSize.width * 0.7,
-              padding: EdgeInsets.all(screenSize.width * 0.03),
+              width: screenSize.width * 0.65, // Reduced width
+              padding:
+                  EdgeInsets.all(screenSize.width * 0.02), // Reduced padding
               decoration: BoxDecoration(
                 color: Colors.blue.shade900.withOpacity(0.9),
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(10), // Smaller radius
                 border: Border.all(
                   color: item.isTrophy ? Colors.amber : Colors.blue.shade300,
-                  width: item.isTrophy ? 3 : 2,
+                  width: item.isTrophy ? 2 : 1, // Thinner border
                 ),
                 boxShadow: [
                   BoxShadow(
                     color: item.isTrophy
                         ? Colors.amber.withOpacity(0.3)
                         : Colors.blue.shade300.withOpacity(0.2),
-                    spreadRadius: 2,
-                    blurRadius: 10,
+                    spreadRadius: 1, // Reduced spread
+                    blurRadius: 5, // Reduced blur
                   ),
                 ],
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Item Name
-                  Text(
-                    item.name,
-                    style: TextStyle(
-                      fontFamily: 'MedievalSharp',
-                      fontSize: screenSize.width * 0.04,
-                      fontWeight: FontWeight.bold,
-                      color: item.isTrophy ? Colors.amber : Colors.white,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black,
-                          offset: const Offset(1, 1),
-                          blurRadius: 3,
-                        ),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: screenSize.height * 0.02),
-
-                  // Item Icon
-                  Container(
-                    width: screenSize.width * 0.15,
-                    height: screenSize.width * 0.15,
-                    decoration: BoxDecoration(
-                      color: item.isTrophy
-                          ? Colors.amber.withOpacity(0.2)
-                          : Colors.blue.withOpacity(0.2),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: item.isTrophy
-                              ? Colors.amber.withOpacity(0.3)
-                              : Colors.blue.withOpacity(0.2),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      item.isTrophy
-                          ? Icons.emoji_events
-                          : item.affects == 'health'
-                              ? Icons.favorite
-                              : item.affects == 'damage'
-                                  ? Icons.flash_on
-                                  : Icons.directions_run,
-                      color: item.isTrophy
-                          ? Colors.amber
-                          : item.affects == 'health'
-                              ? Colors.red
-                              : item.affects == 'damage'
-                                  ? Colors.orange
-                                  : Colors.green,
-                      size: screenSize.width * 0.1,
-                    ),
-                  ),
-                  SizedBox(height: screenSize.height * 0.02),
-
-                  // Item Description
-                  Container(
-                    padding: EdgeInsets.all(screenSize.width * 0.03),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: Colors.blue.shade300.withOpacity(0.5),
-                        width: 1,
-                      ),
-                    ),
-                    child: Text(
-                      item.description,
-                      style: TextStyle(
-                        fontFamily: 'MedievalSharp',
-                        fontSize: screenSize.width * 0.03,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  SizedBox(height: screenSize.height * 0.02),
-
-                  // Item Effect
-                  if (!item.isTrophy)
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: screenSize.width * 0.03,
-                        vertical: screenSize.height * 0.01,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Colors.blue.shade300.withOpacity(0.5),
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            item.affects == 'health'
-                                ? Icons.favorite
-                                : item.affects == 'damage'
-                                    ? Icons.flash_on
-                                    : Icons.directions_run,
-                            color: item.affects == 'health'
-                                ? Colors.red
-                                : item.affects == 'damage'
-                                    ? Colors.orange
-                                    : Colors.green,
-                            size: screenSize.width * 0.04,
+                  // Header with name and close button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          item.name,
+                          style: TextStyle(
+                            fontFamily: 'MedievalSharp',
+                            fontSize: screenSize.width * 0.035, // Smaller font
+                            fontWeight: FontWeight.bold,
+                            color: item.isTrophy ? Colors.amber : Colors.white,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black,
+                                offset: const Offset(1, 1),
+                                blurRadius: 2,
+                              ),
+                            ],
                           ),
-                          SizedBox(width: 8),
-                          Text(
-                            '+${item.increaseAmount.toInt()} ${item.affects.capitalize()}',
-                            style: TextStyle(
-                              fontFamily: 'MedievalSharp',
-                              fontSize: screenSize.width * 0.03,
-                              color: item.affects == 'health'
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      // Close Button
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedItem = null;
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.3),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: screenSize.height * 0.01),
+
+                  // Item information row
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Item Icon
+                      Container(
+                        width: screenSize.width * 0.1, // Smaller icon
+                        height: screenSize.width * 0.1,
+                        decoration: BoxDecoration(
+                          color: item.isTrophy
+                              ? Colors.amber.withOpacity(0.2)
+                              : Colors.blue.withOpacity(0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          item.isTrophy
+                              ? Icons.emoji_events
+                              : item.affects == 'health'
+                                  ? Icons.favorite
+                                  : item.affects == 'damage'
+                                      ? Icons.flash_on
+                                      : Icons.directions_run,
+                          color: item.isTrophy
+                              ? Colors.amber
+                              : item.affects == 'health'
                                   ? Colors.red
                                   : item.affects == 'damage'
                                       ? Colors.orange
                                       : Colors.green,
-                            ),
-                          ),
-                        ],
+                          size: screenSize.width * 0.06,
+                        ),
                       ),
-                    ),
-                  SizedBox(height: screenSize.height * 0.02),
+                      SizedBox(width: 10),
+
+                      // Description and effects column
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Item Description
+                            Container(
+                              padding: EdgeInsets.all(screenSize.width * 0.02),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                item.description,
+                                style: TextStyle(
+                                  fontFamily: 'MedievalSharp',
+                                  fontSize:
+                                      screenSize.width * 0.025, // Smaller font
+                                  color: Colors.white,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+
+                            // Item Effect
+                            if (!item.isTrophy)
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      item.affects == 'health'
+                                          ? Icons.favorite
+                                          : item.affects == 'damage'
+                                              ? Icons.flash_on
+                                              : Icons.directions_run,
+                                      color: item.affects == 'health'
+                                          ? Colors.red
+                                          : item.affects == 'damage'
+                                              ? Colors.orange
+                                              : Colors.green,
+                                      size: 16,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      '+${item.increaseAmount.toInt()} ${item.affects.capitalize()}',
+                                      style: TextStyle(
+                                        fontFamily: 'MedievalSharp',
+                                        fontSize: screenSize.width * 0.025,
+                                        color: item.affects == 'health'
+                                            ? Colors.red
+                                            : item.affects == 'damage'
+                                                ? Colors.orange
+                                                : Colors.green,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: screenSize.height * 0.01),
 
                   // Price and Purchase Button
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Price
                       Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: screenSize.width * 0.03,
-                          vertical: screenSize.height * 0.01,
+                          horizontal: 8,
+                          vertical: 4,
                         ),
                         decoration: BoxDecoration(
                           color: canAfford
                               ? Colors.amber.withOpacity(0.3)
                               : Colors.red.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color:
-                                canAfford ? Colors.amber : Colors.red.shade300,
-                            width: 1,
-                          ),
+                          borderRadius: BorderRadius.circular(6),
                         ),
                         child: Row(
                           children: [
@@ -769,14 +790,14 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
                               color: canAfford
                                   ? Colors.amber
                                   : Colors.red.shade300,
-                              size: screenSize.width * 0.04,
+                              size: 16,
                             ),
-                            SizedBox(width: 8),
+                            SizedBox(width: 4),
                             Text(
                               '${item.price}',
                               style: TextStyle(
                                 fontFamily: 'MedievalSharp',
-                                fontSize: screenSize.width * 0.04,
+                                fontSize: screenSize.width * 0.03,
                                 color: canAfford
                                     ? Colors.amber
                                     : Colors.red.shade300,
@@ -794,8 +815,8 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
                         pressedImagePath: canAfford
                             ? 'assets/images/UI/Buttons/Button_Blue_3Slides_Pressed.png'
                             : 'assets/images/UI/Buttons/Button_Red_3Slides_Pressed.png',
-                        text: canAfford ? 'BUY' : 'CANNOT BUY',
-                        width: screenSize.width * 0.25,
+                        text: canAfford ? 'BUY' : 'NO',
+                        width: screenSize.width * 0.15, // Smaller button
                         onPressed: () {
                           HapticFeedback.mediumImpact();
                           if (canAfford) {
@@ -807,32 +828,6 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
                         },
                       ),
                     ],
-                  ),
-                  SizedBox(height: screenSize.height * 0.02),
-
-                  // Close Button
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedItem = null;
-                      });
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(screenSize.width * 0.01),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.3),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.red.shade300,
-                          width: 1,
-                        ),
-                      ),
-                      child: Icon(
-                        Icons.close,
-                        color: Colors.white,
-                        size: screenSize.width * 0.04,
-                      ),
-                    ),
                   ),
                 ],
               ),
