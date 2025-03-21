@@ -76,14 +76,17 @@ class Shieldbound extends FlameGame
         }
 
         // Apply stored stats
-        player.health = playerData.health;
+        player.health = playerData.maxHealth;
         player.maxHealth = playerData.maxHealth;
         player.damage = playerData.damage;
         player.moveSpeed = playerData.moveSpeed;
 
+        playerData.health = playerData.maxHealth;
+
         // Update providers
         ref.read(playerDataProvider.notifier).state = playerData;
         ref.read(playerGoldProvider.notifier).state = playerData.gold;
+        ref.read(playerHealthProvider.notifier).state = player.health.toInt();
       }
 
       // Update providers with player instance

@@ -6,6 +6,7 @@ import 'package:shieldbound/src/models/player_data.dart';
 import 'package:shieldbound/src/providers/provider.dart';
 import 'package:shieldbound/src/services/pocketbase_service.dart';
 import 'package:shieldbound/src/ui/menu/image_button.dart';
+import '../hud_overlay.dart';
 import 'main_menu.dart';
 
 class ShopMenu extends ConsumerStatefulWidget {
@@ -106,6 +107,8 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
           break;
         case 'damage':
           playerData.damage += item.increaseAmount;
+          ref.read(playerDamageProvider.notifier).state =
+              playerData.damage.toInt();
           break;
         case 'moveSpeed':
           playerData.moveSpeed += item.increaseAmount;
@@ -120,7 +123,6 @@ class _ShopMenuState extends ConsumerState<ShopMenu>
       if (updatedPlayerData != null) {
         // Update player data in state
         ref.read(playerDataProvider.notifier).state = updatedPlayerData;
-        ref.read(playerGoldProvider.notifier).state = updatedPlayerData.gold;
 
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
