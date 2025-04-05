@@ -1,7 +1,7 @@
 # Project học phần Phát triển ứng dụng di động (CT484)
 Học kỳ 2, Năm học 2024-2025
 
-Tên dự án: Game 2D RPG cho mobile 
+Tên dự án: Game 2D RPG cho mobile (SHIELD BOUND)
 
 MSSV 1: B2111846
 
